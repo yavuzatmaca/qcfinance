@@ -1,0 +1,42 @@
+{
+  "name": "quebec-tax-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lighthouse": "node scripts/test-lighthouse.js",
+    "lighthouse:prod": "SITE_URL=https://qcfinance.ca node scripts/test-lighthouse.js",
+    "analyze": "ANALYZE=true npm run build"
+  },
+  "dependencies": {
+    "@google-analytics/data": "^5.2.1",
+    "@vercel/og": "^0.8.6",
+    "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
+    "framer-motion": "^12.31.0",
+    "jspdf": "^4.1.0",
+    "jspdf-autotable": "^5.0.7",
+    "lucide-react": "^0.563.0",
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^18.3.0",
+    "react-hook-form": "^7.71.1",
+    "recharts": "^2.15.4",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.0.0"
+  }
+}
