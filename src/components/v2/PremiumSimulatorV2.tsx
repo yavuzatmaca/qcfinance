@@ -11,15 +11,18 @@ import {
   PiggyBank, Wallet, Lightbulb, Users, Baby, Car, Zap,
   Receipt, Utensils, Bus, Building2, Sparkles,
   AlertTriangle, AlertCircle, Coins, UserPlus, BarChart3,
-  PartyPopper, Sparkle, ThumbsUp, AlertOctagon
+  PartyPopper, Sparkle, ThumbsUp, AlertOctagon, X, Share2, Bookmark, DollarSign
 } from 'lucide-react';
 import { WizardState } from './types';
 import { useSimulatorV2, generateInsightsV2 } from '@/src/hooks/v2/useSimulatorV2';
 import SimulatorActionsV2 from '@/components/v2/SimulatorActionsV2';
 import AffiliateRecommendationsV2 from '@/components/v2/AffiliateRecommendationsV2';
+import AdSenseAd from '@/components/AdSenseAd';
+import { ResultsWithEditableExpenses } from './ResultsWithEditableExpenses';
 
 interface Props {
   wizardState: WizardState;
+  setWizardState: (state: WizardState | ((prev: WizardState) => WizardState)) => void;
   onReset: () => void;
 }
 
@@ -52,11 +55,14 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   );
 }
 
-export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
+export default function PremiumSimulatorV2({ wizardState, setWizardState, onReset }: Props) {
   const result = useSimulatorV2(wizardState);
   const insights = result ? generateInsightsV2(result) : [];
   const [showComparison, setShowComparison] = React.useState(false);
   const [refreshScenarios, setRefreshScenarios] = React.useState(0);
+  const [showStickyAd, setShowStickyAd] = React.useState(true);
+  const [isQuickSummaryExpanded, setIsQuickSummaryExpanded] = React.useState(false);
+  const [activeCardIndex, setActiveCardIndex] = React.useState(0);
 
   if (!result) {
     return (
@@ -107,8 +113,172 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
     return null;
   };
 
+  // Share functionality
+  const handleShare = async () => {
+    const text = `💰 Mon Budget au Québec:\n📍 ${result.city.name}\n💵 Revenu net: ${result.monthlyBreakdown.income.toLocaleString('fr-CA')}$/mois\n💚 Disponible: ${result.monthlyBreakdown.disposable.toLocaleString('fr-CA')}$/mois\n📊 Taux d'épargne: ${result.financialHealth.savingsRate.toFixed(0)}%\n\nCalculé sur QCFinance.ca`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href });
+      } catch (err) {
+        copyToClipboard(text);
+      }
+    } else {
+      copyToClipboard(text);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert('✅ Copié dans le presse-papier!');
+  };
+
+  // Save scenario
+  const handleSave = () => {
+    const scenario = {
+      id: Date.now(),
+      wizardState,
+      result: {
+        netIncome: result.monthlyBreakdown.income,
+        disposable: result.monthlyBreakdown.disposable,
+        savingsRate: result.financialHealth.savingsRate,
+        city: result.city.name
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    const saved = JSON.parse(localStorage.getItem('qc-simulator-scenarios') || '[]');
+    localStorage.setItem('qc-simulator-scenarios', JSON.stringify([scenario, ...saved].slice(0, 5)));
+    
+    alert('✅ Scénario sauvegardé!');
+  };
+
+  const keyMetricsCards = [
+    {
+      key: 'net-income',
+      icon: <Wallet className="w-6 h-6" />,
+      label: 'Revenu Net',
+      value: `${Math.round(result.monthlyBreakdown.income).toLocaleString('fr-CA')} $`,
+      detail: 'par mois',
+      color: 'blue',
+    },
+    {
+      key: 'disposable',
+      icon: result.monthlyBreakdown.disposable >= 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />,
+      label: 'Disponible',
+      value: `${Math.round(result.monthlyBreakdown.disposable).toLocaleString('fr-CA')} $`,
+      detail: 'après dépenses',
+      color: result.monthlyBreakdown.disposable >= 0 ? 'green' : 'red',
+    },
+    {
+      key: 'savings-rate',
+      icon: <PiggyBank className="w-6 h-6" />,
+      label: 'Taux d\'Épargne',
+      value: `${Math.round(result.financialHealth.savingsRate)}%`,
+      detail: result.financialHealth.status,
+      color: 'emerald',
+    },
+    {
+      key: 'rent-ratio',
+      icon: <Home className="w-6 h-6" />,
+      label: 'Ratio Loyer',
+      value: `${result.financialHealth.rentToIncomeRatio.toFixed(0)}%`,
+      detail: 'du revenu',
+      color: 'orange',
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-radial from-slate-900 via-slate-950 to-slate-950 relative overflow-hidden">
+      {/* MOBILE ONLY: Sticky Summary Bar */}
+      <div className="lg:hidden sticky top-0 z-40 bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
+        {!isQuickSummaryExpanded ? (
+          /* COLLAPSED STATE */
+          <button
+            onClick={() => setIsQuickSummaryExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-blue-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {Math.round(result.monthlyBreakdown.disposable).toLocaleString('fr-CA')} $/mois
+                </div>
+                <div className="text-white/70 text-xs">
+                  Épargne: {Math.round(result.financialHealth.savingsRate)}% • {result.city.name}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Détails</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          /* EXPANDED STATE */
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Résumé Budget</h3>
+                  <p className="text-white/70 text-xs">{result.city.name}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickSummaryExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-white/80 text-xs">Revenu net</span>
+                <span className="text-white text-lg font-bold">{Math.round(result.monthlyBreakdown.income).toLocaleString('fr-CA')} $</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-white/80 text-xs">Dépenses</span>
+                <span className="text-white text-lg font-bold">{Math.round(result.monthlyBreakdown.totalExpenses).toLocaleString('fr-CA')} $</span>
+              </div>
+              <div className="h-px bg-white/20" />
+              <div className="flex items-center justify-between">
+                <span className="text-white/80 text-xs font-semibold">Disponible</span>
+                <span className={`text-xl font-bold ${result.monthlyBreakdown.disposable >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                  {Math.round(result.monthlyBreakdown.disposable).toLocaleString('fr-CA')} $
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleSave}
+                className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Bookmark className="w-4 h-4" />
+                Sauvegarder
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Background Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
@@ -292,104 +462,32 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
               </div>
             </motion.div>
 
-            {/* Expenses Breakdown */}
-            <motion.div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 shadow-xl">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-orange-400" />
-                Dépenses Mensuelles
-              </h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                  <span className="flex items-center gap-2 text-slate-300">
-                    <Building2 className="w-4 h-4 text-orange-400" />
-                    Loyer
-                  </span>
-                  <span className="font-semibold text-white">
-                    {result.monthlyBreakdown.rent.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                  <span className="flex items-center gap-2 text-slate-300">
-                    <ShoppingBag className="w-4 h-4 text-yellow-400" />
-                    Épicerie
-                  </span>
-                  <span className="font-semibold text-white">
-                    {result.monthlyBreakdown.groceries.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                  <span className="flex items-center gap-2 text-slate-300">
-                    {wizardState.transportType === 'public' ? (
-                      <Bus className="w-4 h-4 text-blue-400" />
-                    ) : wizardState.transportType === 'bike-walk' ? (
-                      <Users className="w-4 h-4 text-blue-400" />
-                    ) : (
-                      <Car className="w-4 h-4 text-blue-400" />
-                    )}
-                    {wizardState.transportType === 'public' ? 'Transport en commun' :
-                     wizardState.transportType === '1-car' ? 'Voiture (1)' :
-                     wizardState.transportType === '2-cars' ? 'Voitures (2)' :
-                     'Vélo/Marche'}
-                  </span>
-                  <span className="font-semibold text-white">
-                    {result.monthlyBreakdown.transport.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                  <span className="flex items-center gap-2 text-slate-300">
-                    <Zap className="w-4 h-4 text-purple-400" />
-                    Services publics
-                  </span>
-                  <span className="font-semibold text-white">
-                    {result.monthlyBreakdown.utilities.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                  </span>
-                </div>
-                {result.monthlyBreakdown.childcare > 0 && (
-                  <div className="flex items-center justify-between py-2 border-b border-white/5">
-                    <span className="flex items-center gap-2 text-slate-300">
-                      <Baby className="w-4 h-4 text-pink-400" />
-                      Garde d'enfants
-                    </span>
-                    <span className="font-semibold text-white">
-                      {result.monthlyBreakdown.childcare.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                    </span>
-                  </div>
-                )}
-                {result.monthlyBreakdown.otherExpenses > 0 && (
-                  <div className="flex items-center justify-between py-2 border-b border-white/5">
-                    <span className="flex items-center gap-2 text-slate-300">
-                      <Wallet className="w-4 h-4 text-slate-400" />
-                      Autres dépenses
-                    </span>
-                    <span className="font-semibold text-white">
-                      {result.monthlyBreakdown.otherExpenses.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                    </span>
-                  </div>
-                )}
-                <div className="pt-3 mt-2 border-t border-white/10 flex justify-between items-center">
-                  <span className="font-bold text-white">Total Dépenses</span>
-                  <span className="font-bold text-orange-400 text-lg">
-                    {result.monthlyBreakdown.totalExpenses.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                  </span>
-                </div>
-                {result.monthlyBreakdown.childBenefits > 0 && (
-                  <div className="flex items-center justify-between py-2 bg-green-500/10 rounded-lg px-3 -mx-3">
-                    <span className="flex items-center gap-2 text-green-300">
-                      <TrendingUp className="w-4 h-4 text-green-400" />
-                      Allocations familiales
-                    </span>
-                    <span className="font-semibold text-green-400">
-                      +{result.monthlyBreakdown.childBenefits.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })}
-                    </span>
-                  </div>
-                )}
+            {/* Expenses Breakdown - EDITABLE */}
+            <ResultsWithEditableExpenses
+              wizardState={wizardState}
+              setWizardState={setWizardState}
+              monthlyBreakdown={result.monthlyBreakdown}
+              defaultValues={{
+                rent: result.housing.adjustedRent,
+                groceries: result.city.monthlyGrocery * (wizardState.partnerStatus === 'partner-working' || wizardState.partnerStatus === 'partner-not-working' ? 1.5 : 1),
+                transport: wizardState.transportType === 'public' ? result.city.transportation : 
+                          wizardState.transportType === '1-car' ? 300 :
+                          wizardState.transportType === '2-cars' ? 600 : 0,
+                utilities: result.city.utilities,
+                childcare: {
+                  '0-5': wizardState.hasCPE ? 200 : 1100,
+                  '6-12': 300,
+                  '13-17': 0
+                }
+              }}
+            />
+
+            {/* Ad Placement - Sidebar Middle (Critical for Mobile Early Engagement) */}
+            <div className="flex justify-center py-6 md:py-8">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
               </div>
-              
-              {/* Data Source Note */}
-              <div className="mt-3 text-xs text-slate-400 italic text-center">
-                Basé sur les prix moyens à {result.city.name} 2026
-              </div>
-            </motion.div>
+            </div>
 
             {/* Personalized Insights - Moved from right dashboard */}
             {insights.length > 0 && (
@@ -446,8 +544,74 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
 
           {/* RIGHT DASHBOARD */}
           <div className="lg:col-span-8 space-y-6">
+            {/* Mobile: Swipeable Key Metrics */}
+            <div className="lg:hidden">
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h3 className="text-sm font-bold text-white">Indicateurs Clés</h3>
+                <span className="text-xs text-slate-400">Swipe →</span>
+              </div>
+              <div
+                className="overflow-x-auto scrollbar-hide snap-x snap-mandatory -mx-4 px-4"
+                onScroll={(e) => {
+                  const scrollLeft = e.currentTarget.scrollLeft;
+                  const cardWidth = 280 + 12;
+                  const index = Math.round(scrollLeft / cardWidth);
+                  setActiveCardIndex(index);
+                }}
+              >
+                <div className="flex gap-3 pb-2">
+                  {keyMetricsCards.map((card, idx) => (
+                    <div
+                      key={card.key}
+                      className={`flex-shrink-0 snap-center w-[280px] p-5 rounded-xl transition-all ${
+                        activeCardIndex === idx
+                          ? card.color === 'blue'
+                            ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-xl scale-105'
+                            : card.color === 'green'
+                            ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-xl scale-105'
+                            : card.color === 'red'
+                            ? 'bg-gradient-to-br from-red-500 to-orange-600 text-white shadow-xl scale-105'
+                            : card.color === 'emerald'
+                            ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl scale-105'
+                            : 'bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-xl scale-105'
+                          : 'bg-white/5 border-2 border-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={activeCardIndex === idx ? 'text-white' : 'text-' + card.color + '-400'}>
+                          {card.icon}
+                        </div>
+                        {activeCardIndex === idx && (
+                          <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">ACTIF</span>
+                        )}
+                      </div>
+                      <div className={`text-xs font-semibold mb-1 ${activeCardIndex === idx ? 'text-white/90' : 'text-slate-400'}`}>
+                        {card.label}
+                      </div>
+                      <div className={`text-3xl font-bold mb-1 ${activeCardIndex === idx ? 'text-white' : 'text-white'}`}>
+                        {card.value}
+                      </div>
+                      <div className={`text-xs ${activeCardIndex === idx ? 'text-white/80' : 'text-slate-500'}`}>
+                        {card.detail}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-center gap-2 mt-3">
+                {keyMetricsCards.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      activeCardIndex === idx ? 'w-6 bg-blue-500' : 'w-2 bg-slate-600'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
             {/* Top Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="hidden lg:grid grid-cols-1 md:grid-cols-3 gap-6">
               <motion.div
                 whileHover={{ scale: 1.02, y: -5 }}
                 className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-lg border border-green-400/20 rounded-2xl p-6 shadow-xl hover:shadow-green-500/20 transition-all relative overflow-hidden"
@@ -556,6 +720,13 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
                   </div>
                 </div>
               </motion.div>
+            </div>
+
+            {/* Ad Placement 1 - After Top Stats (High Engagement) */}
+            <div className="flex justify-center py-6 md:py-8">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
             </div>
 
             {/* Charts Row */}
@@ -675,6 +846,13 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
               </motion.div>
             </div>
 
+            {/* Ad Placement 2 - After Charts (Natural Break) */}
+            <div className="flex justify-center py-6 md:py-8">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
+
             {/* Simulator Actions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -775,6 +953,13 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
               <AffiliateRecommendationsV2 result={result} />
             </motion.div>
 
+            {/* Ad Placement 3 - Bottom of Results (High CTR Before Exit) */}
+            <div className="flex justify-center py-6 md:py-8">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
+
             {/* Footer */}
             <div className="text-center py-6 text-slate-400 text-sm">
               <p>Calculs basés sur les taux 2025/2026 • Résultats approximatifs à titre indicatif</p>
@@ -782,6 +967,28 @@ export default function PremiumSimulatorV2({ wizardState, onReset }: Props) {
           </div>
         </div>
       </motion.div>
+
+      {/* Sticky Bottom Ad - Mobile Only */}
+      {showStickyAd && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t-2 border-slate-700 shadow-2xl">
+          <div className="relative">
+            <button
+              onClick={() => setShowStickyAd(false)}
+              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+              aria-label="Fermer la publicité"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="p-4 pb-6">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd 
+                adSlot="7290777867"
+                adFormat="auto"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* City Comparison Modal - Placeholder for future implementation */}
       {showComparison && (

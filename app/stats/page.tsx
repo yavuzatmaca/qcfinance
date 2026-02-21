@@ -89,7 +89,7 @@ export default function StatsPage() {
       setStats(data);
       setLastUpdate(new Date());
     } catch (error) {
-      console.error('Failed to fetch stats:', error);
+      // Silent fail
     } finally {
       setLoading(false);
     }

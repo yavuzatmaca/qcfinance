@@ -108,20 +108,22 @@ export default function RootLayout({
   return (
     <html lang="fr-CA">
       <head>
-        {/* Ezoic Privacy Scripts - Must load first */}
-        <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
-        <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
-        
-        {/* Ezoic Header Script */}
-        <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
-        <script dangerouslySetInnerHTML={{__html: `
-          window.ezstandalone = window.ezstandalone || {};
-          ezstandalone.cmd = ezstandalone.cmd || [];
-        `}} />
-        
         <meta name="google-adsense-account" content="ca-pub-2733523563879283" />
+        
+        {/* Google AdSense - Otomatik Reklamlar */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2733523563879283"
+          crossOrigin="anonymous"
+        />
+        
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
         <meta name="theme-color" content="#10b981" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="QCFinance" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="/manifest.json" />
         <link rel="alternate" hrefLang="fr-CA" href="https://qcfinance.ca/" />
         <link rel="alternate" hrefLang="fr" href="https://qcfinance.ca/" />
         <link rel="alternate" hrefLang="x-default" href="https://qcfinance.ca/" />

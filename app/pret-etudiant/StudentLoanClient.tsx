@@ -2,11 +2,15 @@
 
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import { X, Share2, Bookmark } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export default function StudentLoanClient() {
   const [loanAmount, setLoanAmount] = useState<number>(20000)
   const [interestRate, setInterestRate] = useState<number>(7.2)
   const [term, setTerm] = useState<number>(120) // months
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   const TAX_CREDIT_RATE = 0.20 // 20% Quebec tax credit on student loan interest
 
@@ -38,101 +42,187 @@ export default function StudentLoanClient() {
     }).format(value)
   }
 
+  const handleShare = async () => {
+    const text = `🎓 Prêt Étudiant:\n💵 ${formatCurrency(loanAmount)}\n📅 ${(term/12).toFixed(1)} ans\n💳 ${formatCurrency(monthlyPayment)}/mois\n🎉 Crédit: ${formatCurrency(taxCredit)}\n\nCalculé sur QCFinance.ca`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href });
+      } catch (err) {
+        navigator.clipboard.writeText(text);
+        alert('✅ Copié dans le presse-papier!');
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('✅ Copié dans le presse-papier!');
+    }
+  };
+
+  const handleSave = () => {
+    const calc = { id: Date.now(), loanAmount, interestRate, term, monthlyPayment, timestamp: new Date().toISOString() };
+    const saved = JSON.parse(localStorage.getItem('qc-student-calcs') || '[]');
+    localStorage.setItem('qc-student-calcs', JSON.stringify([calc, ...saved].slice(0, 3)));
+    
+    const btn = document.getElementById('save-btn');
+    if (btn) {
+      btn.classList.add('scale-110', 'bg-green-500');
+      setTimeout(() => btn.classList.remove('scale-110', 'bg-green-500'), 500);
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      {/* Left Column - Inputs */}
-      <div className="lg:col-span-5 space-y-6 order-2 lg:order-none">
-        <div className="bg-white rounded-2xl shadow-lg border border-indigo-200 p-8">
-          <h2 className="text-2xl font-bold text-indigo-900 mb-6 flex items-center gap-2">
-            <span className="text-3xl">🎓</span>
-            Votre prêt étudiant
-          </h2>
+    <>
+      {/* Sticky Bar - Mobile + Desktop */}
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-indigo-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {formatCurrency(monthlyPayment)}/mois
+                </div>
+                <div className="text-white/70 text-xs">
+                  {formatCurrency(loanAmount)} • {(term/12).toFixed(1)} ans
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Prêt Étudiant</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-white/80 text-xs font-semibold mb-1">Paiement mensuel</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(monthlyPayment)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-white/80 text-xs font-semibold mb-1">Crédit d'impôt</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(taxCredit)}</div>
+                </div>
+              </div>
+            </div>
 
-          {/* Loan Amount */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Montant du prêt
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-semibold">$</span>
-              <input
-                type="number"
-                value={loanAmount || ''}
-                onChange={(e) => setLoanAmount(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                step="1000"
-              />
-            </div>
-            <div className="mt-2 flex gap-2">
-              {[10000, 20000, 30000, 50000].map((quickAmount) => (
-                <button
-                  key={quickAmount}
-                  onClick={() => setLoanAmount(quickAmount)}
-                  className="flex-1 py-1 px-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 rounded text-xs font-semibold transition-colors"
-                >
-                  {quickAmount / 1000}k
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Interest Rate */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Taux d'intérêt annuel : {interestRate.toFixed(2)}%
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="12"
-              step="0.1"
-              value={interestRate}
-              onChange={(e) => setInterestRate(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>0%</span>
-              <span>12%</span>
-            </div>
-            <div className="mt-2 bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-              <p className="text-xs text-indigo-700">
-                💡 <strong>Taux AFE 2026 :</strong> ~7.2% (taux variable)
-              </p>
-            </div>
-          </div>
-
-          {/* Term */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Durée du remboursement : {term} mois
-            </label>
-            <input
-              type="range"
-              min="60"
-              max="180"
-              step="12"
-              value={term}
-              onChange={(e) => setTerm(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>60 (5 ans)</span>
-              <span>180 (15 ans)</span>
-            </div>
-            <p className="text-xs text-slate-600 mt-2">
-              {(term / 12).toFixed(1)} années de remboursement
-            </p>
-          </div>
-
-          {/* Info Box */}
-          <div className="bg-violet-50 border-2 border-violet-200 rounded-xl p-4">
-            <div className="flex gap-3">
-              <div className="text-2xl">ℹ️</div>
+            <div className="space-y-3">
               <div>
-                <h3 className="font-bold text-violet-900 text-sm mb-1">
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Montant du prêt
+                </label>
+                <input
+                  type="range"
+                  min="5000"
+                  max="80000"
+                  step="1000"
+                  value={loanAmount}
+                  onChange={(e) => setLoanAmount(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(loanAmount)}</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Taux d'intérêt
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="12"
+                  step="0.1"
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{interestRate.toFixed(2)}%</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Durée
+                </label>
+                <input
+                  type="range"
+                  min="60"
+                  max="180"
+                  step="12"
+                  value={term}
+                  onChange={(e) => setTerm(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{term} mois ({(term/12).toFixed(1)} ans)</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                id="save-btn"
+                onClick={handleSave}
+                className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Bookmark className="w-4 h-4" />
+                Sauvegarder
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Left Column - Info Box Only (Desktop) */}
+      <div className="lg:col-span-5 space-y-6 order-2 lg:order-none hidden lg:block">
+        <div className="bg-white rounded-2xl shadow-lg border border-indigo-200 p-8">
+          <div className="bg-violet-50 border-2 border-violet-200 rounded-xl p-6">
+            <div className="flex gap-3">
+              <svg className="w-8 h-8 text-violet-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 className="font-bold text-violet-900 text-lg mb-2">
                   Prêt étudiant AFE
                 </h3>
-                <p className="text-xs text-violet-800">
+                <p className="text-sm text-violet-800 leading-relaxed">
                   Les prêts de l'Aide financière aux études (AFE) ont des taux d'intérêt 
                   avantageux et donnent droit à un crédit d'impôt de 20% sur les intérêts payés.
                 </p>
@@ -148,7 +238,9 @@ export default function StudentLoanClient() {
           {/* Hero Payment Card */}
           <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl shadow-2xl p-8 lg:p-10 text-white">
             <div className="text-center">
-              <div className="text-5xl mb-3">📚</div>
+              <svg className="w-16 h-16 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
               <h2 className="text-lg font-medium opacity-90 mb-2">
                 Paiement mensuel
               </h2>
@@ -163,7 +255,9 @@ export default function StudentLoanClient() {
 
           {/* Tax Credit Badge */}
           <div className="bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl shadow-xl p-6 text-white text-center">
-            <div className="text-4xl mb-3">🎉</div>
+            <svg className="w-12 h-12 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             <h3 className="text-xl font-bold mb-2">
               Bonne nouvelle !
             </h3>
@@ -283,7 +377,9 @@ export default function StudentLoanClient() {
           {/* Early Payoff Tip */}
           <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl border-2 border-violet-200 p-6">
             <h4 className="font-bold text-violet-900 mb-3 flex items-center gap-2">
-              <span className="text-2xl">💡</span>
+              <svg className="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
               Remboursez plus rapidement
             </h4>
             <p className="text-sm text-violet-800 mb-3">
@@ -305,5 +401,26 @@ export default function StudentLoanClient() {
         </div>
       </div>
     </div>
+
+    {/* Sticky Bottom Ad - Mobile Only */}
+    {showStickyAd && (
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl lg:hidden">
+        <button
+          onClick={() => setShowStickyAd(false)}
+          className="absolute -top-8 right-2 w-8 h-8 bg-slate-800 hover:bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg touch-manipulation active:scale-95 transition-all"
+          aria-label="Fermer la publicité"
+        >
+          <X className="w-4 h-4" />
+        </button>
+        <div className="h-[100px] flex items-center justify-center">
+          <AdSenseAd 
+            adSlot="1234567890"
+            adFormat="horizontal"
+            fullWidthResponsive={true}
+          />
+        </div>
+      </div>
+    )}
+  </>
   )
 }

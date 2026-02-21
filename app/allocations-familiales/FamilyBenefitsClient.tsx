@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Baby, Users, Minus, Plus, TrendingUp, Sparkles } from 'lucide-react'
+import { Baby, Users, Minus, Plus, TrendingUp, Sparkles, Share2, Bookmark, X } from 'lucide-react'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import AdSenseAd from '@/components/AdSenseAd'
 
 // 2026 Federal CCB (ACE) Constants
 const FEDERAL_MAX_UNDER_6 = 7787 // per year
@@ -20,6 +21,8 @@ export default function FamilyBenefitsClient() {
   const [childrenUnder6, setChildrenUnder6] = useState(1)
   const [children6to17, setChildren6to17] = useState(0)
   const [custody, setCustody] = useState<'full' | 'shared'>('full')
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
+  const [showStickyAd, setShowStickyAd] = useState(true)
 
   // Calculations
   const custodyMultiplier = custody === 'shared' ? 0.5 : 1.0
@@ -73,7 +76,205 @@ export default function FamilyBenefitsClient() {
     }).format(amount)
   }
 
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Mes Allocations Familiales',
+      text: `Je reçois ${formatCurrency(totalMonthly)}/mois en allocations familiales (${formatCurrency(totalYearly)}/an) 💰`,
+      url: window.location.href,
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        // Share cancelled
+      }
+    } else {
+      navigator.clipboard.writeText(`${shareData.text} - ${shareData.url}`)
+      alert('Copié dans le presse-papier!')
+    }
+  }
+
   return (
+    <>
+      {/* STICKY MINIMAL BAR - Mobile Only */}
+      <div className="lg:hidden sticky top-16 z-40 bg-gradient-to-r from-emerald-500 to-green-600 shadow-lg mb-4">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-emerald-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <Baby className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {formatCurrency(totalMonthly)}/mois
+                </div>
+                <div className="text-white/70 text-xs">
+                  {formatCurrency(totalYearly)} par année
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Baby className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Allocations Familiales</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Quick Inputs Grid */}
+            <div className="space-y-3">
+              {/* Income Input */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Revenu familial annuel
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 font-medium">$</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={income}
+                    onChange={(e) => setIncome(Number(e.target.value))}
+                    className="w-full pl-8 pr-4 py-2.5 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm min-h-[44px] touch-manipulation"
+                    placeholder="65000"
+                  />
+                </div>
+              </div>
+
+              {/* Children Counters */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Under 6 */}
+                <div>
+                  <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                    Moins de 6 ans
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setChildrenUnder6(Math.max(0, childrenUnder6 - 1))}
+                      disabled={childrenUnder6 === 0}
+                      className="w-10 h-10 bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg flex items-center justify-center touch-manipulation active:scale-95 min-h-[44px] transition-all"
+                    >
+                      <Minus className="w-4 h-4 text-white" />
+                    </button>
+                    <span className="text-2xl font-bold text-white flex-1 text-center">{childrenUnder6}</span>
+                    <button
+                      onClick={() => setChildrenUnder6(childrenUnder6 + 1)}
+                      className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center touch-manipulation active:scale-95 min-h-[44px] transition-all"
+                    >
+                      <Plus className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 6 to 17 */}
+                <div>
+                  <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                    6 à 17 ans
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setChildren6to17(Math.max(0, children6to17 - 1))}
+                      disabled={children6to17 === 0}
+                      className="w-10 h-10 bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg flex items-center justify-center touch-manipulation active:scale-95 min-h-[44px] transition-all"
+                    >
+                      <Minus className="w-4 h-4 text-white" />
+                    </button>
+                    <span className="text-2xl font-bold text-white flex-1 text-center">{children6to17}</span>
+                    <button
+                      onClick={() => setChildren6to17(children6to17 + 1)}
+                      className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center touch-manipulation active:scale-95 min-h-[44px] transition-all"
+                    >
+                      <Plus className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Custody Type */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Type de garde
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setCustody('full')}
+                    className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                      custody === 'full'
+                        ? 'bg-white text-emerald-600 shadow-lg'
+                        : 'bg-white/20 text-white hover:bg-white/30'
+                    }`}
+                  >
+                    Complète (100%)
+                  </button>
+                  <button
+                    onClick={() => setCustody('shared')}
+                    className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                      custody === 'shared'
+                        ? 'bg-white text-emerald-600 shadow-lg'
+                        : 'bg-white/20 text-white hover:bg-white/30'
+                    }`}
+                  >
+                    Partagée (50%)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Result Display */}
+            <div className="mt-4 p-4 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
+              <div className="text-center">
+                <div className="text-white/80 text-xs font-medium mb-1">Vos allocations totales</div>
+                <div className="text-white text-3xl font-bold">{formatCurrency(totalMonthly)}</div>
+                <div className="text-white/70 text-xs mt-1">par mois • {formatCurrency(totalYearly)}/an</div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/20 hover:bg-white/30 rounded-lg text-white text-xs font-semibold transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
+              </button>
+              <button
+                onClick={() => alert('Scénario sauvegardé!')}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/20 hover:bg-white/30 rounded-lg text-white text-xs font-semibold transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Bookmark className="w-4 h-4" />
+                Sauvegarder
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
       
       {/* LEFT COLUMN - INPUTS (Mobile: Order 2) */}
@@ -95,9 +296,10 @@ export default function FamilyBenefitsClient() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
               <input
                 type="number"
+                inputMode="decimal"
                 value={income}
                 onChange={(e) => setIncome(Number(e.target.value))}
-                className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all min-h-[44px] touch-manipulation"
               />
             </div>
             <input
@@ -107,7 +309,7 @@ export default function FamilyBenefitsClient() {
               step="1000"
               value={income}
               onChange={(e) => setIncome(Number(e.target.value))}
-              className="w-full mt-3 accent-blue-600"
+              className="w-full mt-3 accent-blue-600 touch-manipulation"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
               <span>0$</span>
@@ -123,7 +325,7 @@ export default function FamilyBenefitsClient() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setCustody('full')}
-                className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                className={`px-4 py-3 rounded-xl font-medium transition-all min-h-[44px] touch-manipulation active:scale-95 ${
                   custody === 'full'
                     ? 'bg-blue-600 text-white shadow-lg scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -133,7 +335,7 @@ export default function FamilyBenefitsClient() {
               </button>
               <button
                 onClick={() => setCustody('shared')}
-                className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                className={`px-4 py-3 rounded-xl font-medium transition-all min-h-[44px] touch-manipulation active:scale-95 ${
                   custody === 'shared'
                     ? 'bg-blue-600 text-white shadow-lg scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -161,7 +363,7 @@ export default function FamilyBenefitsClient() {
               <button
                 onClick={() => setChildrenUnder6(Math.max(0, childrenUnder6 - 1))}
                 disabled={childrenUnder6 === 0}
-                className="w-12 h-12 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center transition-colors"
+                className="w-12 h-12 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center transition-colors min-h-[44px] touch-manipulation active:scale-95"
               >
                 <Minus className="w-5 h-5 text-gray-700" />
               </button>
@@ -170,7 +372,7 @@ export default function FamilyBenefitsClient() {
               </span>
               <button
                 onClick={() => setChildrenUnder6(childrenUnder6 + 1)}
-                className="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-xl flex items-center justify-center transition-colors"
+                className="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-xl flex items-center justify-center transition-colors min-h-[44px] touch-manipulation active:scale-95"
               >
                 <Plus className="w-5 h-5 text-white" />
               </button>
@@ -186,7 +388,7 @@ export default function FamilyBenefitsClient() {
               <button
                 onClick={() => setChildren6to17(Math.max(0, children6to17 - 1))}
                 disabled={children6to17 === 0}
-                className="w-12 h-12 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center transition-colors"
+                className="w-12 h-12 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center transition-colors min-h-[44px] touch-manipulation active:scale-95"
               >
                 <Minus className="w-5 h-5 text-gray-700" />
               </button>
@@ -195,7 +397,7 @@ export default function FamilyBenefitsClient() {
               </span>
               <button
                 onClick={() => setChildren6to17(children6to17 + 1)}
-                className="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 rounded-xl flex items-center justify-center transition-colors"
+                className="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 rounded-xl flex items-center justify-center transition-colors min-h-[44px] touch-manipulation active:scale-95"
               >
                 <Plus className="w-5 h-5 text-white" />
               </button>
@@ -312,5 +514,24 @@ export default function FamilyBenefitsClient() {
         </div>
       </div>
     </div>
+
+      {/* STICKY BOTTOM AD - Mobile Only */}
+      {showStickyAd && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
+          <div className="relative">
+            <button
+              onClick={() => setShowStickyAd(false)}
+              className="absolute -top-8 right-2 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-700 transition-colors z-10 touch-manipulation active:scale-95"
+              aria-label="Fermer la publicité"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="min-h-[100px] flex items-center justify-center">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

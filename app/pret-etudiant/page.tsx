@@ -3,6 +3,7 @@ import StudentLoanClient from './StudentLoanClient'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: "Calculateur Prêt Étudiant Québec - Remboursement AFE",
@@ -52,6 +53,13 @@ export default function StudentLoanPage() {
             <StudentLoanClient />
           </div>
 
+          {/* Ad Placement 1 - After Calculator */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-debt" />
 
@@ -98,6 +106,13 @@ export default function StudentLoanPage() {
               </div>
             </div>
           </section>
+
+          {/* Ad Placement 2 - After Info Section */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* Tips Section */}
           <section className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg p-8">

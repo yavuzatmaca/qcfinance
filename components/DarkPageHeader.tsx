@@ -76,33 +76,33 @@ export default function DarkPageHeader({
   const IconComponent = badgeIcon ? iconMap[badgeIcon as keyof typeof iconMap] : null
 
   return (
-    <div className="bg-slate-900 text-white px-6 py-8 md:py-12">
+    <div className="bg-slate-900 text-white px-4 md:px-6 py-6 md:py-10">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb with Schema.org */}
         {breadcrumbLabel && (
-          <div className="mb-6">
+          <div className="mb-4 md:mb-6">
             <Breadcrumb items={[{ label: breadcrumbLabel }]} theme="dark" />
           </div>
         )}
 
         {/* Centered Content */}
         <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-4 flex-wrap">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-slate-300 text-sm font-medium">
-              {IconComponent && <IconComponent className="w-4 h-4" aria-hidden="true" />}
-              {badge}
+          <div className="flex items-center justify-center gap-2 mb-3 md:mb-4 flex-wrap">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-[10px] md:text-xs font-semibold backdrop-blur-sm">
+              {IconComponent && <IconComponent className="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" aria-hidden="true" />}
+              <span className="whitespace-nowrap">{badge}</span>
             </div>
             {showLastUpdated && (
-              <LastUpdatedBadge variant="prominent" theme="dark" />
+              <LastUpdatedBadge variant="compact" theme="dark" />
             )}
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold mb-3 md:mb-4">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 leading-tight">
             {title}
             {titleAccent && (
               <> <span className={`text-transparent bg-clip-text bg-gradient-to-r ${gradientClass}`}>{titleAccent}</span></>
             )}
           </h1>
-          <p className="text-slate-300 text-sm md:text-lg max-w-2xl mx-auto">
+          <p className="text-slate-300 text-xs md:text-sm lg:text-base max-w-2xl mx-auto leading-relaxed px-4">
             {description}
           </p>
         </div>

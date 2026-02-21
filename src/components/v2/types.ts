@@ -54,6 +54,7 @@ export interface WizardState {
     '13-17': number;  // High school count
   };
   hasCPE: boolean;  // Has CPE spot (only if 0-5 age exists)
+  sharedCustody?: boolean;  // NEW: Shared custody (multiply benefits by 0.5)
   
   // Step 4: City
   cityId: string;
@@ -63,6 +64,20 @@ export interface WizardState {
   
   // Step 6: Transport
   transportType: TransportType;
+  
+  // NEW: Custom Expenses (editable in results page)
+  customExpenses?: {
+    rent?: number;
+    groceries?: number;
+    transport?: number;
+    utilities?: number;
+    carPayment?: number;
+    childcare?: {
+      '0-5'?: number;
+      '6-12'?: number;
+      '13-17'?: number;
+    };
+  };
 }
 
 export interface WizardFlowControl {

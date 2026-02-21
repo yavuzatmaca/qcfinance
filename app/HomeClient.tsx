@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { ArrowRight, TrendingUp, Sparkles, Clock, Calculator, Car, GraduationCap, Building2, Wallet, Users, Shield, Eye, Calendar } from 'lucide-react';
 import type { MarketRate } from '@/lib/marketData';
 import { useEffect, useRef, useState } from 'react';
+import AdSenseAd from '@/components/AdSenseAd';
 
 interface HomeClientProps {
   marketRates: MarketRate[];
@@ -422,6 +423,15 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
           </div>
         </div>
 
+        {/* Ad Placement 1 - After Main Tools Grid (High Engagement) */}
+        <div className="mt-12 container mx-auto px-4">
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+        </div>
+
         {/* SECONDARY TOOLS - Mobile Carousel / Desktop Grid */}
         <div className="mt-12 container mx-auto">
           <div className="flex items-center justify-between px-4 mb-6">
@@ -464,6 +474,15 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                 <span className="font-semibold text-slate-700 text-xs md:text-sm">{tool.label}</span>
               </Link>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Ad Placement 2 - After Premium Brand Section (Natural Break) */}
+      <div className="bg-slate-50 py-6 md:py-8">
+        <div className="container mx-auto px-4 flex justify-center">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
           </div>
         </div>
       </div>
@@ -640,6 +659,15 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ad Placement 3 - Before FAQ Section (High CTR Location) */}
+      <div className="bg-white py-6 md:py-8 border-t border-slate-200">
+        <div className="container mx-auto px-4 flex justify-center">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
           </div>
         </div>
       </div>

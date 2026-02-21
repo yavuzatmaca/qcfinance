@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Home, TrendingUp, DollarSign, Clock, CheckCircle, Share2, Download, X } from 'lucide-react'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { generateMortgagePDF } from '@/utils/pdfGenerator'
+import AdSenseAd from '@/components/AdSenseAd'
 
 // CMHC Insurance rates (when down payment < 20%)
 const getCMHCInsurance = (price: number, downPayment: number): number => {
@@ -35,6 +36,8 @@ export default function MortgageCalculatorClient() {
   const [amortization, setAmortization] = useState(25)
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(true)
   const [isTimelineOpen, setIsTimelineOpen] = useState(false)
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
   const topRef = useRef<HTMLDivElement>(null)
   
   // Calculations
@@ -87,16 +90,23 @@ export default function MortgageCalculatorClient() {
     }).format(amount)
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
+    const text = `💰 Paiement mensuel: ${formatCurrency(monthlyPayment)} sur ${amortization} ans à ${rate}%`
+    
     if (navigator.share) {
-      navigator.share({
-        title: 'Mon Calcul Hypothécaire',
-        text: `Paiement mensuel: ${formatCurrency(monthlyPayment)} sur ${amortization} ans à ${rate}%`,
-        url: window.location.href
-      }).catch(() => {})
+      try {
+        await navigator.share({
+          title: 'Mon Calcul Hypothécaire',
+          text,
+          url: window.location.href
+        })
+      } catch (err) {
+        navigator.clipboard.writeText(`${text}\n${window.location.href}`)
+        alert('✅ Copié dans le presse-papiers!')
+      }
     } else {
-      navigator.clipboard.writeText(`Paiement mensuel: ${formatCurrency(monthlyPayment)} sur ${amortization} ans à ${rate}% - ${window.location.href}`)
-      alert('Lien copié dans le presse-papiers!')
+      navigator.clipboard.writeText(`${text}\n${window.location.href}`)
+      alert('✅ Copié dans le presse-papiers!')
     }
   }
 
@@ -122,11 +132,209 @@ export default function MortgageCalculatorClient() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12" ref={topRef}>
+    <>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-12" ref={topRef}>
       
-      {/* LEFT COLUMN - INPUTS (Mobile: Order 2) */}
-      <div className="lg:col-span-5 order-2 lg:order-none space-y-6">
-        <div className="bg-white rounded-2xl shadow-lg border border-indigo-100 p-6 lg:p-8">
+      {/* MOBILE ONLY: Minimal Sticky Bar with Expand */}
+      <div className="lg:hidden sticky top-16 z-40 bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg">
+        {!isQuickCalcExpanded ? (
+          /* COLLAPSED STATE - Minimal */
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-indigo-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <Home className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {formatCurrency(monthlyPayment)}
+                </div>
+                <div className="text-white/70 text-xs">
+                  {formatCurrency(price)} • {rate}% • {amortization} ans
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          /* EXPANDED STATE - Full Calculator */
+          <div className="p-4 animate-slide-down">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Home className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Calculateur Hypothèque</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Result Preview */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+              <div className="text-white/80 text-xs font-semibold mb-1">Votre paiement mensuel</div>
+              <div className="text-white text-3xl font-bold tracking-tight mb-1">
+                {formatCurrency(monthlyPayment)}
+              </div>
+              <div className="flex items-center gap-3 text-xs text-white/70">
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" />
+                  {amortization} ans
+                </span>
+                <span className="flex items-center gap-1">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  {rate}%
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Price Slider */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-white">Prix de la propriété</span>
+                  <span className="text-sm font-bold text-white">{formatCurrency(price)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="50000"
+                  max="1000000"
+                  step="10000"
+                  value={price}
+                  onChange={(e) => setPrice(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                {/* Quick Presets */}
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {[300000, 400000, 500000, 600000].map(amount => (
+                    <button
+                      key={amount}
+                      type="button"
+                      onClick={() => setPrice(amount)}
+                      className={`px-3 py-2 rounded-lg text-xs font-bold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                        price === amount
+                          ? 'bg-white text-indigo-600 shadow-lg'
+                          : 'bg-white/20 text-white hover:bg-white/30'
+                      }`}
+                    >
+                      {amount / 1000}k
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Down Payment Slider */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-white">Mise de fonds</span>
+                  <span className="text-sm font-bold text-white">{downPaymentPercent}% • {formatCurrency(downPayment)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  step="1"
+                  value={downPaymentPercent}
+                  onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                {downPaymentPercent < 20 && (
+                  <div className="flex items-center gap-2 mt-2 p-2 bg-yellow-500/20 rounded-lg border border-yellow-400/30">
+                    <AlertTriangle className="w-4 h-4 text-yellow-200 flex-shrink-0" />
+                    <span className="text-xs text-yellow-100">Assurance SCHL: {formatCurrency(cmhcInsurance)}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Collapsible Advanced Options */}
+              <details className="group">
+                <summary className="flex items-center justify-between cursor-pointer touch-manipulation py-2 text-white/80 hover:text-white list-none">
+                  <span className="text-xs font-semibold">+ Options avancées</span>
+                  <svg className="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                
+                <div className="mt-3 space-y-3 pt-3 border-t border-white/20">
+                  {/* Rate Selection */}
+                  <div>
+                    <label className="text-xs font-semibold text-white block mb-2">Taux d'intérêt</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[4.5, 4.8, 5.25, 6.0].map(rateValue => (
+                        <button
+                          key={rateValue}
+                          type="button"
+                          onClick={() => setRate(rateValue)}
+                          className={`px-3 py-2 rounded-lg text-xs font-bold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                            rate === rateValue
+                              ? 'bg-white text-indigo-600 shadow-lg'
+                              : 'bg-white/20 text-white hover:bg-white/30'
+                          }`}
+                        >
+                          {rateValue}%
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Amortization Selection */}
+                  <div>
+                    <label className="text-xs font-semibold text-white block mb-2">Amortissement</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[15, 20, 25, 30].map(years => (
+                        <button
+                          key={years}
+                          type="button"
+                          onClick={() => setAmortization(years)}
+                          className={`px-3 py-2 rounded-lg text-xs font-bold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                            amortization === years
+                              ? 'bg-white text-indigo-600 shadow-lg'
+                              : 'bg-white/20 text-white hover:bg-white/30'
+                          }`}
+                        >
+                          {years}a
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              {/* Action Button */}
+              <button
+                onClick={() => {
+                  setIsQuickCalcExpanded(false)
+                  scrollToTop()
+                }}
+                className="w-full bg-white text-indigo-600 font-bold py-3 rounded-xl touch-manipulation active:scale-95 transition-all shadow-lg min-h-[52px] text-sm"
+              >
+                Voir tous les détails
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* LEFT COLUMN - INPUTS (Mobile: Order 2, Desktop: Full Form) */}
+      <div className="lg:col-span-5 order-2 lg:order-1 space-y-6">
+        <div className="hidden lg:block bg-white rounded-2xl shadow-lg border border-indigo-100 p-6 lg:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Paramètres du prêt</h2>
           
           {/* FEATURE 1: Quick Presets */}
@@ -135,50 +343,20 @@ export default function MortgageCalculatorClient() {
               Montant rapide
             </label>
             <div className="grid grid-cols-4 gap-2">
-              <button
-                type="button"
-                onClick={() => setPrice(300000)}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  price === 300000
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
-                }`}
-              >
-                300k
-              </button>
-              <button
-                type="button"
-                onClick={() => setPrice(400000)}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  price === 400000
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
-                }`}
-              >
-                400k
-              </button>
-              <button
-                type="button"
-                onClick={() => setPrice(500000)}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  price === 500000
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
-                }`}
-              >
-                500k
-              </button>
-              <button
-                type="button"
-                onClick={() => setPrice(600000)}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  price === 600000
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
-                }`}
-              >
-                600k
-              </button>
+              {[300000, 400000, 500000, 600000].map(amount => (
+                <button
+                  key={amount}
+                  type="button"
+                  onClick={() => setPrice(amount)}
+                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all min-h-[44px] touch-manipulation active:scale-95 ${
+                    price === amount
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
+                  }`}
+                >
+                  {amount / 1000}k
+                </button>
+              ))}
             </div>
           </div>
           
@@ -191,9 +369,10 @@ export default function MortgageCalculatorClient() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
               <input
                 type="number"
+                inputMode="decimal"
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all touch-manipulation min-h-[44px]"
               />
             </div>
             <input
@@ -241,61 +420,32 @@ export default function MortgageCalculatorClient() {
             <div className="relative">
               <input
                 type="number"
+                inputMode="decimal"
                 value={rate}
                 onChange={(e) => setRate(Number(e.target.value))}
                 step="0.01"
                 min="0"
                 max="15"
-                className="w-full pl-4 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                className="w-full pl-4 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all touch-manipulation min-h-[44px]"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
             </div>
             {/* Quick Select Buttons */}
             <div className="grid grid-cols-4 gap-2 mt-3">
-              <button
-                type="button"
-                onClick={() => setRate(4.5)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  rate === 4.5
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                4.5%
-              </button>
-              <button
-                type="button"
-                onClick={() => setRate(4.8)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  rate === 4.8
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                4.8%
-              </button>
-              <button
-                type="button"
-                onClick={() => setRate(5.25)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  rate === 5.25
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                5.25%
-              </button>
-              <button
-                type="button"
-                onClick={() => setRate(6.0)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  rate === 6.0
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                6.0%
-              </button>
+              {[4.5, 4.8, 5.25, 6.0].map(rateValue => (
+                <button
+                  key={rateValue}
+                  type="button"
+                  onClick={() => setRate(rateValue)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[44px] touch-manipulation active:scale-95 ${
+                    rate === rateValue
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {rateValue}%
+                </button>
+              ))}
             </div>
           </div>
 
@@ -307,7 +457,7 @@ export default function MortgageCalculatorClient() {
             <select
               value={amortization}
               onChange={(e) => setAmortization(Number(e.target.value))}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all touch-manipulation min-h-[44px]"
             >
               <option value={15}>15 ans</option>
               <option value={20}>20 ans</option>
@@ -319,60 +469,62 @@ export default function MortgageCalculatorClient() {
       </div>
 
       {/* RIGHT COLUMN - STICKY RESULTS (Mobile: Order 1) */}
-      <div className="lg:col-span-7 order-1 lg:order-none">
-        <div className="lg:sticky lg:top-24 space-y-6">
+      <div className="lg:col-span-7 order-1 lg:order-2">
+        <div className="lg:sticky lg:top-24 space-y-5 lg:space-y-6">
           
           {/* HERO NUMBER - Monthly Payment */}
-          <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl shadow-2xl p-8 text-white">
-            <p className="text-lg opacity-90 mb-2">Votre paiement mensuel</p>
-            <p className="text-6xl md:text-7xl font-bold mb-4">
+          <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl shadow-2xl p-6 lg:p-8 text-white">
+            <p className="text-sm lg:text-lg opacity-90 mb-2">Votre paiement mensuel</p>
+            <p className="text-5xl md:text-6xl lg:text-7xl font-bold mb-3 lg:mb-4">
               {formatCurrency(monthlyPayment)}
             </p>
-            <p className="text-indigo-100 text-sm">
+            <p className="text-indigo-100 text-xs lg:text-sm">
               Sur {amortization} ans à {rate}%
             </p>
           </div>
 
           {/* FEATURE 2: Biweekly Comparison Card */}
-          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl shadow-lg p-6 border-2 border-emerald-200">
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl shadow-lg p-5 lg:p-6 border-2 border-emerald-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900 text-lg">💰 Économisez avec paiements aux 2 sem.</h3>
-              <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-              </svg>
+              <h3 className="font-bold text-gray-900 text-base lg:text-lg flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <span>Économisez avec paiements aux 2 sem.</span>
+              </h3>
+              <TrendingUp className="w-5 h-5 text-emerald-600 flex-shrink-0" />
             </div>
             
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-2 gap-2 lg:gap-3 mb-3 lg:mb-4">
               <div className="bg-white rounded-lg p-3 border border-emerald-200">
-                <div className="text-xs text-gray-500 mb-1">Paiement aux 2 sem.</div>
-                <div className="text-xl font-bold text-gray-900">{formatCurrency(biweeklyPayment)}</div>
+                <div className="text-[10px] lg:text-xs text-gray-500 mb-1">Paiement aux 2 sem.</div>
+                <div className="text-lg lg:text-xl font-bold text-gray-900">{formatCurrency(biweeklyPayment)}</div>
               </div>
               <div className="bg-white rounded-lg p-3 border border-emerald-200">
-                <div className="text-xs text-emerald-600 font-semibold mb-1">Économie totale</div>
-                <div className="text-xl font-bold text-emerald-600">{formatCurrency(Math.max(0, biweeklySavings))}</div>
+                <div className="text-[10px] lg:text-xs text-emerald-600 font-semibold mb-1">Économie totale</div>
+                <div className="text-lg lg:text-xl font-bold text-emerald-600">{formatCurrency(Math.max(0, biweeklySavings))}</div>
               </div>
             </div>
             
-            <div className="flex items-start gap-2 text-sm text-gray-700 bg-white rounded-lg p-3 border border-emerald-200">
-              <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
-              </svg>
+            <div className="flex items-start gap-2 text-xs lg:text-sm text-gray-700 bg-white rounded-lg p-3 border border-emerald-200">
+              <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
               <span>Remboursé en <strong className="text-emerald-700">{Math.floor(biweeklyYearsToPayoff)} ans</strong> au lieu de {amortization} ans</span>
             </div>
           </div>
 
           {/* THE "SHOCK" BADGE */}
           {showShockBadge && (
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-xl p-6 text-white">
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-xl p-5 lg:p-6 text-white">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-8 h-8 flex-shrink-0 mt-1" />
+                <AlertTriangle className="w-7 h-7 lg:w-8 lg:h-8 flex-shrink-0 mt-1" />
                 <div>
-                  <p className="font-bold text-lg mb-1">Attention : Coût élevé des intérêts</p>
-                  <p className="text-orange-50">
-                    Vous paierez <span className="font-bold text-2xl">{formatCurrency(totalInterest)}</span> en intérêts sur {amortization} ans !
+                  <p className="font-bold text-base lg:text-lg mb-1">Attention : Coût élevé des intérêts</p>
+                  <p className="text-orange-50 text-sm lg:text-base">
+                    Vous paierez <span className="font-bold text-xl lg:text-2xl">{formatCurrency(totalInterest)}</span> en intérêts sur {amortization} ans !
                   </p>
-                  <p className="text-sm text-orange-100 mt-2">
-                    💡 Réduisez votre amortissement ou augmentez votre mise de fonds pour économiser.
+                  <p className="text-xs lg:text-sm text-orange-100 mt-2 flex items-start gap-2">
+                    <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                    </svg>
+                    <span>Réduisez votre amortissement ou augmentez votre mise de fonds pour économiser.</span>
                   </p>
                 </div>
               </div>
@@ -383,16 +535,14 @@ export default function MortgageCalculatorClient() {
           <div className="bg-white rounded-2xl shadow-lg border border-indigo-100 overflow-hidden">
             <button
               onClick={() => setIsBreakdownOpen(!isBreakdownOpen)}
-              className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-5 lg:p-6 hover:bg-gray-50 transition-colors touch-manipulation min-h-[44px]"
             >
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                </svg>
-                <h3 className="text-xl font-bold text-gray-900">Résumé du prêt</h3>
+              <div className="flex items-center gap-2 lg:gap-3">
+                <DollarSign className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+                <h3 className="text-base lg:text-xl font-bold text-gray-900">Résumé du prêt</h3>
               </div>
               <svg
-                className={`w-5 h-5 text-gray-400 transition-transform ${isBreakdownOpen ? 'rotate-180' : ''}`}
+                className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${isBreakdownOpen ? 'rotate-180' : ''}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -402,56 +552,62 @@ export default function MortgageCalculatorClient() {
             </button>
             
             {isBreakdownOpen && (
-              <div className="px-6 pb-6">
-            <div className="space-y-3 mb-6">
+              <div className="px-5 lg:px-6 pb-5 lg:pb-6">
+            <div className="space-y-2 lg:space-y-3 mb-5 lg:mb-6">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-700">Prix de la propriété</span>
-                <span className="font-semibold text-gray-900">{formatCurrency(price)}</span>
+                <span className="text-xs lg:text-sm text-gray-700">Prix de la propriété</span>
+                <span className="font-semibold text-sm lg:text-base text-gray-900">{formatCurrency(price)}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-700">Mise de fonds ({downPaymentPercent}%)</span>
-                <span className="font-semibold text-green-600">-{formatCurrency(downPayment)}</span>
+                <span className="text-xs lg:text-sm text-gray-700">Mise de fonds ({downPaymentPercent}%)</span>
+                <span className="font-semibold text-sm lg:text-base text-green-600">-{formatCurrency(downPayment)}</span>
               </div>
               {cmhcInsurance > 0 && (
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-700">Assurance SCHL</span>
-                  <span className="font-semibold text-orange-600">+{formatCurrency(cmhcInsurance)}</span>
+                  <span className="text-xs lg:text-sm text-gray-700">Assurance SCHL</span>
+                  <span className="font-semibold text-sm lg:text-base text-orange-600">+{formatCurrency(cmhcInsurance)}</span>
                 </div>
               )}
               <div className="flex justify-between items-center py-2 border-b-2 border-indigo-200">
-                <span className="text-gray-700 font-semibold">Montant hypothécaire</span>
-                <span className="font-bold text-indigo-600">{formatCurrency(mortgageAmount)}</span>
+                <span className="text-xs lg:text-sm text-gray-700 font-semibold">Montant hypothécaire</span>
+                <span className="font-bold text-sm lg:text-base text-indigo-600">{formatCurrency(mortgageAmount)}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-700">Total des paiements</span>
-                <span className="font-semibold text-gray-900">{formatCurrency(totalPaid)}</span>
+                <span className="text-xs lg:text-sm text-gray-700">Total des paiements</span>
+                <span className="font-semibold text-sm lg:text-base text-gray-900">{formatCurrency(totalPaid)}</span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-700">Total des intérêts</span>
-                <span className="font-bold text-red-600">{formatCurrency(totalInterest)}</span>
+                <span className="text-xs lg:text-sm text-gray-700">Total des intérêts</span>
+                <span className="font-bold text-sm lg:text-base text-red-600">{formatCurrency(totalInterest)}</span>
               </div>
             </div>
 
             {/* VISUAL BAR - Principal vs Interest */}
-            <div className="mt-6">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Répartition du coût total</p>
-              <div className="flex h-8 rounded-lg overflow-hidden shadow-inner">
+            <div className="mt-5 lg:mt-6">
+              <p className="text-xs lg:text-sm font-semibold text-gray-700 mb-2">Répartition du coût total</p>
+              <div className="flex h-7 lg:h-8 rounded-lg overflow-hidden shadow-inner">
                 <div 
-                  className="bg-indigo-500 flex items-center justify-center text-white text-xs font-semibold"
+                  className="bg-indigo-500 flex items-center justify-center text-white text-[10px] lg:text-xs font-semibold"
                   style={{ width: `${principalPercent}%` }}
                 >
                   {principalPercent > 15 && 'Principal'}
                 </div>
                 <div 
-                  className="bg-red-500 flex items-center justify-center text-white text-xs font-semibold"
+                  className="bg-red-500 flex items-center justify-center text-white text-[10px] lg:text-xs font-semibold"
                   style={{ width: `${interestPercent}%` }}
                 >
                   {interestPercent > 15 && 'Intérêts'}
                 </div>
               </div>
-              <div className="flex justify-between text-xs text-gray-600 mt-2">
-                <span>💙 Principal: {principalPercent.toFixed(0)}%</span>
-                <span>❤️ Intérêts: {interestPercent.toFixed(0)}%</span>
+              <div className="flex justify-between text-[10px] lg:text-xs text-gray-600 mt-2">
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 bg-indigo-500 rounded-sm"></span>
+                  Principal: {principalPercent.toFixed(0)}%
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 bg-red-500 rounded-sm"></span>
+                  Intérêts: {interestPercent.toFixed(0)}%
+                </span>
               </div>
             </div>
               </div>
@@ -462,16 +618,14 @@ export default function MortgageCalculatorClient() {
           <div className="bg-white rounded-2xl shadow-lg border border-indigo-100 overflow-hidden">
             <button
               onClick={() => setIsTimelineOpen(!isTimelineOpen)}
-              className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-5 lg:p-6 hover:bg-gray-50 transition-colors touch-manipulation min-h-[44px]"
             >
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <h3 className="text-xl font-bold text-gray-900">Évolution du solde</h3>
+              <div className="flex items-center gap-2 lg:gap-3">
+                <Clock className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+                <h3 className="text-base lg:text-xl font-bold text-gray-900">Évolution du solde</h3>
               </div>
               <svg
-                className={`w-5 h-5 text-gray-400 transition-transform ${isTimelineOpen ? 'rotate-180' : ''}`}
+                className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${isTimelineOpen ? 'rotate-180' : ''}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -481,11 +635,11 @@ export default function MortgageCalculatorClient() {
             </button>
             
             {isTimelineOpen && (
-              <div className="px-6 pb-6">
-                <div className="space-y-3">
+              <div className="px-5 lg:px-6 pb-5 lg:pb-6">
+                <div className="space-y-2 lg:space-y-3">
                   {timelineMilestones.map((milestone) => (
-                    <div key={milestone.year} className="flex items-center gap-3">
-                      <div className="flex-shrink-0 w-12 text-sm font-semibold text-gray-600">
+                    <div key={milestone.year} className="flex items-center gap-2 lg:gap-3">
+                      <div className="flex-shrink-0 w-10 lg:w-12 text-xs lg:text-sm font-semibold text-gray-600">
                         {milestone.year} ans
                       </div>
                       <div className="flex-1">
@@ -496,7 +650,7 @@ export default function MortgageCalculatorClient() {
                           />
                         </div>
                       </div>
-                      <div className={`flex-shrink-0 w-24 text-right text-sm font-semibold ${milestone.balance === 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
+                      <div className={`flex-shrink-0 w-20 lg:w-24 text-right text-xs lg:text-sm font-semibold ${milestone.balance === 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
                         {formatCurrency(milestone.balance)}{milestone.balance === 0 ? ' ✓' : ''}
                       </div>
                     </div>
@@ -505,10 +659,10 @@ export default function MortgageCalculatorClient() {
                 
                 <div className="mt-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                   <div className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
                     </svg>
-                    <p className="text-xs text-emerald-800">
+                    <p className="text-[10px] lg:text-xs text-emerald-800">
                       <strong>Astuce:</strong> Chaque paiement supplémentaire de 100$/mois peut réduire votre amortissement de 3-4 ans!
                     </p>
                   </div>
@@ -518,33 +672,29 @@ export default function MortgageCalculatorClient() {
           </div>
 
           {/* FEATURE 5: Quick Actions */}
-          <div className="bg-white rounded-2xl shadow-lg border border-indigo-100 p-6">
-            <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="bg-white rounded-2xl shadow-lg border border-indigo-100 p-5 lg:p-6">
+            <div className="grid grid-cols-2 gap-2 lg:gap-3 mb-3">
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all touch-manipulation min-h-[44px] active:scale-95 text-sm lg:text-base"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                </svg>
+                <Share2 className="w-4 h-4 flex-shrink-0" />
                 Partager
               </button>
               <button
                 onClick={handleDownloadPDF}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-xl transition-all touch-manipulation min-h-[44px] active:scale-95 text-sm lg:text-base"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
+                <Download className="w-4 h-4 flex-shrink-0" />
                 PDF
               </button>
             </div>
             
             <button
               onClick={scrollToTop}
-              className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 md:hidden"
+              className="w-full py-3 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 lg:hidden touch-manipulation min-h-[44px] active:scale-95 text-sm"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
               </svg>
               Calculer un autre scénario
@@ -556,5 +706,25 @@ export default function MortgageCalculatorClient() {
         </div>
       </div>
     </div>
+
+    {/* MOBILE ONLY: Sticky Bottom Ad */}
+    {showStickyAd && (
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
+        <div className="relative">
+          <button
+            onClick={() => setShowStickyAd(false)}
+            className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+            aria-label="Fermer la publicité"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <div className="p-4 pb-6">
+            <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+            <AdSenseAd adSlot="7290777867" adFormat="auto" />
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }

@@ -4,6 +4,8 @@ import StructuredData from '@/components/StructuredData'
 import SEOContent from '@/components/SEOContent'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
+import { Users } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: "Allocations Familiales Québec 2026 | Calculateur ACE",
@@ -62,6 +64,13 @@ export default function FamilyBenefitsPage() {
           {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
           <FamilyBenefitsClient />
 
+          {/* Ad Placement 1 - After Calculator */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-salary" />
 
@@ -109,6 +118,13 @@ export default function FamilyBenefitsPage() {
             </div>
           </section>
 
+          {/* Ad Placement 2 - After Info Section */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Guide Section */}
           <section className="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
@@ -117,7 +133,9 @@ export default function FamilyBenefitsPage() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">🇨🇦</span>
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
                   Allocation canadienne pour enfants (ACE)
                 </h3>
                 <p className="text-sm text-gray-600 mb-2">
@@ -130,7 +148,9 @@ export default function FamilyBenefitsPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">⚜️</span>
+                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
                   Soutien aux enfants du Québec
                 </h3>
                 <p className="text-sm text-gray-600 mb-2">
@@ -143,7 +163,7 @@ export default function FamilyBenefitsPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">👨‍👩‍👧</span>
+                  <Users className="w-5 h-5 text-blue-600" />
                   Garde partagée
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -153,7 +173,10 @@ export default function FamilyBenefitsPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">🎓</span>
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                  </svg>
                   REEE et subventions
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -193,6 +216,13 @@ export default function FamilyBenefitsPage() {
                 </div>
               </div>
 
+              {/* Ad Placement 3 - Middle of Tips (Mobile Only) */}
+              <div className="lg:hidden flex justify-center py-4">
+                <div className="max-w-3xl w-full">
+                  <AdSenseAd adSlot="7290777867" />
+                </div>
+              </div>
+
               <div className="flex gap-4 items-start">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                   <span className="text-green-600 font-bold">3</span>
@@ -218,6 +248,13 @@ export default function FamilyBenefitsPage() {
               </div>
             </div>
           </section>
+
+          {/* Ad Placement 4 - Before FAQ (Desktop Only) */}
+          <div className="hidden lg:flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* SEO Content Section */}
           <SEOContent

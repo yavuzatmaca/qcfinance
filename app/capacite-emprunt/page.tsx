@@ -4,6 +4,7 @@ import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
 import { DollarSign } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: "Capacité d'Emprunt Hypothécaire Québec 2026 | Calculateur",
@@ -53,6 +54,13 @@ export default function AffordabilityPage() {
           {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
           <AffordabilityClient />
 
+          {/* AdSense - Après calculator */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="w-full max-w-3xl">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-salary" />
 
@@ -100,6 +108,13 @@ export default function AffordabilityPage() {
             </div>
           </section>
 
+          {/* AdSense - Après section info */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="w-full max-w-3xl">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Tips Section */}
           <section className="mt-12 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
@@ -108,7 +123,9 @@ export default function AffordabilityPage() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-purple-600">💡</span>
+                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                  </svg>
                   Réduisez vos dettes
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -118,7 +135,9 @@ export default function AffordabilityPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-purple-600">💡</span>
+                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                  </svg>
                   Augmentez votre mise de fonds
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -128,7 +147,9 @@ export default function AffordabilityPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-purple-600">💡</span>
+                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                  </svg>
                   Améliorez votre cote de crédit
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -138,7 +159,9 @@ export default function AffordabilityPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-purple-600">💡</span>
+                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                  </svg>
                   Considérez un co-emprunteur
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -147,6 +170,14 @@ export default function AffordabilityPage() {
               </div>
             </div>
           </section>
+
+          {/* AdSense - After Tips (Desktop Only) */}
+          <div className="hidden lg:flex justify-center py-6 md:py-8">
+            <div className="w-full max-w-3xl">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* Data Source */}
           <div className="mt-8">

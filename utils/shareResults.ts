@@ -3,10 +3,8 @@
  * Functions to share simulator results via social media and other channels
  */
 
-import type { SimulatorResult } from '@/src/hooks/useSimulator';
-
 export interface ShareOptions {
-  result: SimulatorResult;
+  result: any;
   grossSalary: number;
 }
 
@@ -68,7 +66,6 @@ export async function copyLinkToClipboard(): Promise<boolean> {
     await navigator.clipboard.writeText('https://qcfinance.ca/simulateur-vie-quebec');
     return true;
   } catch (error) {
-    console.error('Failed to copy link:', error);
     return false;
   }
 }
@@ -89,7 +86,6 @@ export async function shareNative(options: ShareOptions): Promise<boolean> {
     });
     return true;
   } catch (error) {
-    console.error('Failed to share:', error);
     return false;
   }
 }

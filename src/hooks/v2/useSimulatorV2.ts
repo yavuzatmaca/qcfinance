@@ -172,10 +172,13 @@ export function useSimulatorV2(wizardState: WizardState): SimulatorV2Result | nu
     }
 
     // Total household rent (for roommates, this is YOUR share only)
+    // Apply custom rent if provided
+    const finalRent = wizardState.customExpenses?.rent ?? adjustedRent;
+    
     const housing = {
       baseRent: city.avgRent,
       adjustedRent,
-      monthlyTotal: adjustedRent
+      monthlyTotal: finalRent
     };
 
     // Transport costs
@@ -186,9 +189,13 @@ export function useSimulatorV2(wizardState: WizardState): SimulatorV2Result | nu
       'bike-walk': 0
     };
 
+    const baseTransportCost = transportCosts[wizardState.transportType] || 0;
+    const carPayment = wizardState.customExpenses?.carPayment ?? 0;
+    const finalTransport = wizardState.customExpenses?.transport ?? (baseTransportCost + carPayment);
+
     const transport = {
       type: wizardState.transportType,
-      monthlyCost: transportCosts[wizardState.transportType] || 0
+      monthlyCost: finalTransport
     };
 
     // Groceries calculation - total household
@@ -225,6 +232,9 @@ export function useSimulatorV2(wizardState: WizardState): SimulatorV2Result | nu
     
     monthlyGroceries += childrenFoodTotal * scaleDiscount;
 
+    // Apply custom groceries if provided
+    const finalGroceries = wizardState.customExpenses?.groceries ?? monthlyGroceries;
+
     // Utilities calculation - total household
     let monthlyUtilities = city.utilities;
     // Utilities don't scale linearly with people, but do increase
@@ -236,6 +246,9 @@ export function useSimulatorV2(wizardState: WizardState): SimulatorV2Result | nu
       monthlyUtilities = monthlyUtilities / wizardState.roommateCount;
     }
 
+    // Apply custom utilities if provided
+    const finalUtilities = wizardState.customExpenses?.utilities ?? monthlyUtilities;
+
     // Other expenses - total household
     let otherExpenses = 200; // Base amount per person
     if (hasPartner) {
@@ -246,24 +259,41 @@ export function useSimulatorV2(wizardState: WizardState): SimulatorV2Result | nu
       otherExpenses = 200; // Just the user
     }
 
+    // Childcare - apply custom if provided, 13-17 always 0
+    let finalChildcare = childrenCosts.netMonthlyCost;
+    if (wizardState.customExpenses?.childcare) {
+      finalChildcare = 0;
+      if (wizardState.childrenAges['0-5'] > 0) {
+        finalChildcare += (wizardState.customExpenses.childcare['0-5'] ?? 0) * wizardState.childrenAges['0-5'];
+      }
+      if (wizardState.childrenAges['6-12'] > 0) {
+        finalChildcare += (wizardState.customExpenses.childcare['6-12'] ?? 0) * wizardState.childrenAges['6-12'];
+      }
+      // 13-17 is always 0
+    }
+
+    // Apply shared custody multiplier to benefits
+    const sharedCustodyMultiplier = wizardState.sharedCustody ? 0.5 : 1.0;
+    const adjustedChildBenefits = (childrenCosts.totalBenefits / 12) * sharedCustodyMultiplier;
+
     // Monthly breakdown - ALL VALUES ARE TOTAL HOUSEHOLD
     const monthlyBreakdown = {
       income: combinedTax.netMonthly,
-      rent: housing.monthlyTotal,
-      groceries: monthlyGroceries,
-      utilities: monthlyUtilities,
-      transport: transport.monthlyCost,
-      childcare: childrenCosts.netMonthlyCost,
+      rent: finalRent,
+      groceries: finalGroceries,
+      utilities: finalUtilities,
+      transport: finalTransport,
+      childcare: finalChildcare,
       otherExpenses,
-      totalExpenses: housing.monthlyTotal + monthlyGroceries + monthlyUtilities + 
-                     transport.monthlyCost + childrenCosts.netMonthlyCost + otherExpenses,
-      childBenefits: childrenCosts.totalBenefits / 12,
-      netExpenses: housing.monthlyTotal + monthlyGroceries + monthlyUtilities + 
-                   transport.monthlyCost + childrenCosts.netMonthlyCost + otherExpenses,
+      totalExpenses: finalRent + finalGroceries + finalUtilities + 
+                     finalTransport + finalChildcare + otherExpenses,
+      childBenefits: adjustedChildBenefits,
+      netExpenses: finalRent + finalGroceries + finalUtilities + 
+                   finalTransport + finalChildcare + otherExpenses,
       disposable: 0 // Will be calculated below
     };
 
-    monthlyBreakdown.disposable = monthlyBreakdown.income - monthlyBreakdown.netExpenses;
+    monthlyBreakdown.disposable = monthlyBreakdown.income + monthlyBreakdown.childBenefits - monthlyBreakdown.netExpenses;
 
     // Financial health
     const savingsRate = monthlyBreakdown.income > 0 
@@ -271,7 +301,7 @@ export function useSimulatorV2(wizardState: WizardState): SimulatorV2Result | nu
       : 0;
 
     const rentToIncomeRatio = monthlyBreakdown.income > 0
-      ? (housing.monthlyTotal / monthlyBreakdown.income) * 100
+      ? (finalRent / monthlyBreakdown.income) * 100
       : 0;
 
     let status: 'excellent' | 'good' | 'tight' | 'deficit';

@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import { X, Share2, Bookmark } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export default function RetirementClient() {
   const [currentAge, setCurrentAge] = useState<number>(30)
@@ -9,6 +11,8 @@ export default function RetirementClient() {
   const [currentSavings, setCurrentSavings] = useState<number>(10000)
   const [monthlyContribution, setMonthlyContribution] = useState<number>(500)
   const [returnRate, setReturnRate] = useState<number>(6.0)
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   // Calculate years to grow
   const yearsToGrow = Math.max(0, retirementAge - currentAge)
@@ -53,138 +57,223 @@ export default function RetirementClient() {
     return 'Agressif'
   }
 
+  const handleShare = async () => {
+    const text = `🌴 Retraite:\n💰 ${formatCurrency(totalCapital)} à ${retirementAge} ans\n💵 ${formatCurrency(monthlyRetirementIncome)}/mois\n📈 ${interestPercentage.toFixed(0)}% d'intérêts\n\nCalculé sur QCFinance.ca`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href });
+      } catch (err) {
+        navigator.clipboard.writeText(text);
+        alert('✅ Copié dans le presse-papier!');
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('✅ Copié dans le presse-papier!');
+    }
+  };
+
+  const handleSave = () => {
+    const calc = { id: Date.now(), currentAge, retirementAge, currentSavings, monthlyContribution, returnRate, totalCapital, monthlyRetirementIncome, timestamp: new Date().toISOString() };
+    const saved = JSON.parse(localStorage.getItem('qc-retirement-calcs') || '[]');
+    localStorage.setItem('qc-retirement-calcs', JSON.stringify([calc, ...saved].slice(0, 3)));
+    
+    const btn = document.getElementById('save-btn');
+    if (btn) {
+      btn.classList.add('scale-110', 'bg-green-500');
+      setTimeout(() => btn.classList.remove('scale-110', 'bg-green-500'), 500);
+    }
+  };
+
   return (
+    <>
+      {/* Sticky Bar - Mobile + Desktop */}
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-emerald-600 to-green-600 shadow-lg">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-emerald-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {formatCurrency(monthlyRetirementIncome)}/mois
+                </div>
+                <div className="text-white/70 text-xs">
+                  {formatCurrency(totalCapital)} à {retirementAge} ans
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Épargne Retraite</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-white/80 text-xs font-semibold mb-1">Rente mensuelle</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(monthlyRetirementIncome)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-white/80 text-xs font-semibold mb-1">Capital total</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(totalCapital)}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Âge actuel
+                </label>
+                <input
+                  type="range"
+                  min="18"
+                  max="70"
+                  step="1"
+                  value={currentAge}
+                  onChange={(e) => setCurrentAge(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{currentAge} ans</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Âge de retraite
+                </label>
+                <input
+                  type="range"
+                  min="50"
+                  max="75"
+                  step="1"
+                  value={retirementAge}
+                  onChange={(e) => setRetirementAge(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{retirementAge} ans ({yearsToGrow} ans)</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Épargne actuelle
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100000"
+                  step="5000"
+                  value={currentSavings}
+                  onChange={(e) => setCurrentSavings(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(currentSavings)}</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Cotisation mensuelle
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="2000"
+                  step="50"
+                  value={monthlyContribution}
+                  onChange={(e) => setMonthlyContribution(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(monthlyContribution)}</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Rendement espéré
+                </label>
+                <input
+                  type="range"
+                  min="4"
+                  max="8"
+                  step="0.5"
+                  value={returnRate}
+                  onChange={(e) => setReturnRate(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{returnRate.toFixed(1)}% ({getReturnRateLabel(returnRate)})</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                id="save-btn"
+                onClick={handleSave}
+                className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Bookmark className="w-4 h-4" />
+                Sauvegarder
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      {/* Left Column - Inputs */}
-      <div className="lg:col-span-5 space-y-6 order-2 lg:order-none">
+      {/* Left Column - Info Box Only (Desktop) */}
+      <div className="lg:col-span-5 space-y-6 order-2 lg:order-none hidden lg:block">
         <div className="bg-white rounded-2xl shadow-lg border-2 border-emerald-200 p-8">
-          <h2 className="text-2xl font-bold text-emerald-900 mb-6 flex items-center gap-2">
-            <span className="text-3xl">🎯</span>
-            Votre plan
-          </h2>
-
-          {/* Age Sliders */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Âge actuel : {currentAge} ans
-            </label>
-            <input
-              type="range"
-              min="18"
-              max="70"
-              step="1"
-              value={currentAge}
-              onChange={(e) => setCurrentAge(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>18</span>
-              <span>70</span>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Âge de retraite : {retirementAge} ans
-            </label>
-            <input
-              type="range"
-              min="50"
-              max="75"
-              step="1"
-              value={retirementAge}
-              onChange={(e) => setRetirementAge(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>50</span>
-              <span>75</span>
-            </div>
-            <div className="mt-2 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-              <p className="text-xs text-emerald-700 font-semibold">
-                ⏰ {yearsToGrow} années pour faire croître votre épargne
-              </p>
-            </div>
-          </div>
-
-          {/* Current Savings */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Épargne actuelle
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-semibold">$</span>
-              <input
-                type="number"
-                value={currentSavings || ''}
-                onChange={(e) => setCurrentSavings(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                step="1000"
-              />
-            </div>
-            <div className="mt-2 flex gap-2">
-              {[0, 5000, 10000, 25000].map((quickAmount) => (
-                <button
-                  key={quickAmount}
-                  onClick={() => setCurrentSavings(quickAmount)}
-                  className="flex-1 py-1 px-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded text-xs font-semibold transition-colors"
-                >
-                  {quickAmount === 0 ? '0' : `${quickAmount / 1000}k`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Monthly Contribution */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Cotisation mensuelle
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-semibold">$</span>
-              <input
-                type="number"
-                value={monthlyContribution || ''}
-                onChange={(e) => setMonthlyContribution(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                step="50"
-              />
-            </div>
-            <div className="mt-2 flex gap-2">
-              {[200, 500, 1000].map((quickAmount) => (
-                <button
-                  key={quickAmount}
-                  onClick={() => setMonthlyContribution(quickAmount)}
-                  className="flex-1 py-1 px-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded text-xs font-semibold transition-colors"
-                >
-                  {quickAmount}$
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Return Rate */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Rendement espéré : {returnRate.toFixed(1)}% ({getReturnRateLabel(returnRate)})
-            </label>
-            <input
-              type="range"
-              min="4"
-              max="8"
-              step="0.5"
-              value={returnRate}
-              onChange={(e) => setReturnRate(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>4%</span>
-              <span>8%</span>
-            </div>
-            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
-              <p className="text-xs text-amber-700">
-                💡 <strong>Historique :</strong> Les portefeuilles diversifiés (60/40) ont généré ~6% annuellement
-              </p>
+          <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-6">
+            <div className="flex gap-3">
+              <svg className="w-8 h-8 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <div>
+                <h3 className="font-bold text-emerald-900 text-lg mb-2">
+                  Intérêts composés
+                </h3>
+                <p className="text-sm text-emerald-800 leading-relaxed">
+                  Les portefeuilles diversifiés (60/40) ont historiquement généré ~6% annuellement. 
+                  Plus vous commencez tôt, plus les intérêts composés travaillent pour vous.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -196,7 +285,9 @@ export default function RetirementClient() {
           {/* Hero Monthly Income Card */}
           <div className="bg-gradient-to-br from-emerald-600 to-green-700 rounded-2xl shadow-2xl p-8 lg:p-10 text-white">
             <div className="text-center">
-              <div className="text-5xl mb-3">🌴</div>
+              <svg className="w-16 h-16 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               <h2 className="text-lg font-medium opacity-90 mb-2">
                 Rente mensuelle estimée à la retraite
               </h2>
@@ -218,8 +309,11 @@ export default function RetirementClient() {
 
           {/* The Magic Visual - Compound Interest Breakdown */}
           <div className="bg-white rounded-2xl shadow-lg border-2 border-amber-200 p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-4 text-center">
-              ✨ La magie des intérêts composés
+            <h3 className="text-xl font-bold text-slate-900 mb-4 text-center flex items-center justify-center gap-2">
+              <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+              La magie des intérêts composés
             </h3>
 
             {/* Stacked Bar */}
@@ -243,8 +337,11 @@ export default function RetirementClient() {
             </div>
 
             <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-xl p-6 text-center">
-              <p className="text-lg font-bold text-amber-900 mb-2">
-                🎉 Regardez ! {interestPercentage.toFixed(0)}% de votre retraite provient des intérêts !
+              <p className="text-lg font-bold text-amber-900 mb-2 flex items-center justify-center gap-2">
+                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Regardez ! {interestPercentage.toFixed(0)}% de votre retraite provient des intérêts !
               </p>
               <p className="text-sm text-amber-800">
                 Vous investissez {formatCurrency(totalContributed)}, le marché vous donne {formatCurrency(totalInterestEarned)} GRATUITEMENT
@@ -309,7 +406,9 @@ export default function RetirementClient() {
           {/* 4% Rule Explanation */}
           <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border-2 border-purple-200 p-6">
             <h4 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
-              <span className="text-2xl">📊</span>
+              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
               La règle du 4%
             </h4>
             <p className="text-sm text-purple-800 mb-3">
@@ -336,7 +435,9 @@ export default function RetirementClient() {
           {currentAge < 35 && (
             <div className="bg-gradient-to-r from-amber-500 to-yellow-600 rounded-2xl shadow-xl p-6 text-white">
               <div className="text-center">
-                <div className="text-4xl mb-3">🚀</div>
+                <svg className="w-12 h-12 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
                 <h4 className="text-xl font-bold mb-2">
                   Vous avez un avantage ÉNORME !
                 </h4>
@@ -345,8 +446,11 @@ export default function RetirementClient() {
                   C'est l'arme secrète des millionnaires !
                 </p>
                 <div className="bg-white/20 rounded-lg p-3">
-                  <p className="text-xs font-semibold">
-                    💡 Chaque année que vous attendez vous coûte des dizaines de milliers de dollars
+                  <p className="text-xs font-semibold flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Chaque année que vous attendez vous coûte des dizaines de milliers de dollars
                   </p>
                 </div>
               </div>
@@ -358,5 +462,26 @@ export default function RetirementClient() {
         </div>
       </div>
     </div>
+
+    {/* Sticky Bottom Ad - Mobile Only */}
+    {showStickyAd && (
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl lg:hidden">
+        <button
+          onClick={() => setShowStickyAd(false)}
+          className="absolute -top-8 right-2 w-8 h-8 bg-slate-800 hover:bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg touch-manipulation active:scale-95 transition-all"
+          aria-label="Fermer la publicité"
+        >
+          <X className="w-4 h-4" />
+        </button>
+        <div className="h-[100px] flex items-center justify-center">
+          <AdSenseAd 
+            adSlot="1234567890"
+            adFormat="horizontal"
+            fullWidthResponsive={true}
+          />
+        </div>
+      </div>
+    )}
+  </>
   )
 }

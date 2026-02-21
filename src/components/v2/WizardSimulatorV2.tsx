@@ -33,9 +33,11 @@ export default function WizardSimulatorV2() {
       '13-17': 0,
     },
     hasCPE: false,
+    sharedCustody: false,
     cityId: 'montreal',
     housingType: '1br',
     transportType: 'public',
+    customExpenses: undefined,
   });
 
   // Load income from URL parameter on mount
@@ -96,9 +98,11 @@ export default function WizardSimulatorV2() {
         '13-17': 0,
       },
       hasCPE: false,
+      sharedCustody: false,
       cityId: 'montreal',
       housingType: '1br',
       transportType: 'public',
+      customExpenses: undefined,
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -127,7 +131,11 @@ export default function WizardSimulatorV2() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <PremiumSimulatorV2 wizardState={wizardState} onReset={resetWizard} />
+        <PremiumSimulatorV2 
+          wizardState={wizardState} 
+          setWizardState={setWizardState}
+          onReset={resetWizard} 
+        />
       </motion.div>
     );
   }

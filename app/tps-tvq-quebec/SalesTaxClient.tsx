@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
-import { Calculator, Receipt, TrendingUp, ArrowDown, Plus, Minus, DollarSign, FileText } from 'lucide-react'
+import { Calculator, Receipt, TrendingUp, ArrowDown, Plus, Minus, DollarSign, FileText, Share2, X } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 type CalculationMode = 'add' | 'extract'
 
@@ -10,6 +11,8 @@ export default function SalesTaxClient() {
   const [amount, setAmount] = useState<number>(100)
   const [mode, setMode] = useState<CalculationMode>('add')
   const [isAnimating, setIsAnimating] = useState(false)
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
   const resultRef = useRef<HTMLDivElement>(null)
 
   // Tax rates for 2026
@@ -67,12 +70,217 @@ export default function SalesTaxClient() {
     }).format(value)
   }
 
+  const handleShare = async () => {
+    const text = `💰 ${mode === 'add' ? 'Prix final' : 'Prix avant taxes'}: ${mode === 'add' ? formatCurrency(total) : formatCurrency(price)}\nTPS: ${formatCurrency(tps)} | TVQ: ${formatCurrency(tvq)}\n\nCalculé sur QCFinance.ca`
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href })
+      } catch (err) {
+        navigator.clipboard.writeText(text)
+        alert('✅ Copié dans le presse-papier!')
+      }
+    } else {
+      navigator.clipboard.writeText(text)
+      alert('✅ Copié dans le presse-papier!')
+    }
+  }
+
   const taxPercentage = ((tps + tvq) / total) * 100
 
   return (
+    <>
+      {/* MOBILE ONLY: Minimal + Expandable Sticky Bar */}
+      <div className="lg:hidden sticky top-16 z-40 bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg mb-4">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-violet-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <Calculator className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {mode === 'add' ? formatCurrency(total) : formatCurrency(price)}
+                </div>
+                <div className="text-white/70 text-xs">
+                  {mode === 'add' ? 'Prix final' : 'Prix avant taxes'} • Taxes: {formatCurrency(tps + tvq)}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Calculator className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">TPS/TVQ Québec</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-white/80 text-xs font-semibold mb-1">{mode === 'add' ? 'Prix final' : 'Prix avant taxes'}</div>
+                  <div className="text-white text-2xl font-bold">{mode === 'add' ? formatCurrency(total) : formatCurrency(price)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-white/80 text-xs font-semibold mb-1">Taxes</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(tps + tvq)}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setMode('add')}
+                  className={`py-2.5 rounded-lg text-sm font-bold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                    mode === 'add' ? 'bg-white text-violet-600 shadow-lg' : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  <Plus className="w-4 h-4 inline mr-1" />
+                  Ajouter
+                </button>
+                <button
+                  onClick={() => setMode('extract')}
+                  className={`py-2.5 rounded-lg text-sm font-bold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                    mode === 'extract' ? 'bg-white text-violet-600 shadow-lg' : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
+                >
+                  <Minus className="w-4 h-4 inline mr-1" />
+                  Extraire
+                </button>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-white mb-2 block">Montant</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm font-semibold">$</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={amount}
+                    onChange={(e) => setAmount(Number(e.target.value))}
+                    className="w-full pl-8 pr-3 py-2 text-base font-bold bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 touch-manipulation"
+                  />
+                </div>
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {[50, 100, 500, 1000].map((quick) => (
+                    <button
+                      key={quick}
+                      onClick={() => setAmount(quick)}
+                      className={`py-2 rounded-lg text-xs font-bold transition-all touch-manipulation active:scale-95 min-h-[44px] ${
+                        amount === quick ? 'bg-white text-violet-600' : 'bg-white/20 text-white hover:bg-white/30'
+                      }`}
+                    >
+                      {quick}$
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    localStorage.setItem('tps-tvq-last', JSON.stringify({ amount, mode }))
+                    alert('✅ Sauvegardé!')
+                  }}
+                  className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                  </svg>
+                  Sauvegarder
+                </button>
+                <button
+                  onClick={handleShare}
+                  className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Partager
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
     <div className="space-y-4 md:space-y-6">
-      {/* Mode Selector Card - Prominent */}
-      <div className="bg-white rounded-3xl shadow-xl border-2 border-violet-200 overflow-hidden">
+      {/* OLD STICKY BAR - REMOVE THIS SECTION */}
+      <div className="lg:hidden sticky top-16 z-40 bg-white border-b-2 border-violet-200 shadow-lg mb-4">
+        <div className="p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Calculator className="w-5 h-5 text-violet-600 flex-shrink-0" />
+            <span className="text-xs font-bold text-slate-700">Calculez vos taxes</span>
+          </div>
+          
+          <div className="flex gap-2 mb-2">
+            <button
+              onClick={() => {
+                setMode('add')
+                triggerHaptic()
+              }}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all touch-manipulation ${
+                mode === 'add'
+                  ? 'bg-violet-600 text-white'
+                  : 'bg-violet-100 text-violet-700'
+              }`}
+            >
+              + Ajouter
+            </button>
+            <button
+              onClick={() => {
+                setMode('extract')
+                triggerHaptic()
+              }}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all touch-manipulation ${
+                mode === 'extract'
+                  ? 'bg-violet-600 text-white'
+                  : 'bg-violet-100 text-violet-700'
+              }`}
+            >
+              - Extraire
+            </button>
+          </div>
+
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold pointer-events-none">$</span>
+            <input
+              type="number"
+              inputMode="decimal"
+              value={amount || ''}
+              onChange={(e) => setAmount(Number(e.target.value))}
+              className="w-full pl-8 pr-3 py-2.5 text-base font-bold border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 touch-manipulation"
+              placeholder="100"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mode Selector Card - Prominent (Desktop) */}
+      <div className="hidden lg:block bg-white rounded-3xl shadow-xl border-2 border-violet-200 overflow-hidden">
         <div className="bg-gradient-to-r from-violet-600 to-fuchsia-600 p-3 md:p-4 text-center">
           <Calculator className="w-6 h-6 md:w-8 md:h-8 text-white mx-auto mb-1 md:mb-2" />
           <h2 className="text-base md:text-lg font-bold text-white">Choisissez votre calcul</h2>
@@ -324,10 +532,39 @@ export default function SalesTaxClient() {
         </div>
       </div>
 
+      {/* Share Button */}
+      <button
+        onClick={handleShare}
+        className="w-full flex items-center justify-center gap-2 py-3 lg:py-4 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl lg:rounded-2xl transition-all shadow-lg touch-manipulation active:scale-95 min-h-[44px] text-sm lg:text-base"
+      >
+        <Share2 className="w-5 h-5 flex-shrink-0" />
+        <span>Partager mon résultat</span>
+      </button>
+
       {/* Affiliate Card - Desktop Only */}
       <div className="hidden md:block">
         <AffiliateCard variant="savings" />
       </div>
+
+      {/* Sticky Bottom Ad - Mobile Only */}
+      {showStickyAd && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
+          <div className="relative">
+            <button
+              onClick={() => setShowStickyAd(false)}
+              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+              aria-label="Fermer la publicité"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="p-4 pb-6">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd adSlot="7290777867" adFormat="auto" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

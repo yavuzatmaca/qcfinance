@@ -4,6 +4,7 @@ import { Leaf, DollarSign, TrendingDown } from 'lucide-react'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: "Auto Électrique vs Essence Québec 2026 | Calculateur",
@@ -32,6 +33,13 @@ export default function EVSavingsPage() {
 
           {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
           <EVComparisonClient />
+
+          {/* Ad Placement 1 - After Calculator */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-auto-loan" />
@@ -74,6 +82,13 @@ export default function EVSavingsPage() {
             </div>
           </section>
 
+          {/* Ad Placement 2 - After Info Section */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Guide Section */}
           <section className="mt-12 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
@@ -82,7 +97,9 @@ export default function EVSavingsPage() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-green-600">⚜️</span>
+                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
                   Programme Roulez Vert
                 </h3>
                 <p className="text-sm text-gray-600 mb-2">
@@ -95,7 +112,9 @@ export default function EVSavingsPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-green-600">🇨🇦</span>
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
                   Programme fédéral iVZE
                 </h3>
                 <p className="text-sm text-gray-600 mb-2">
@@ -108,7 +127,9 @@ export default function EVSavingsPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-green-600">🔌</span>
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
                   Borne de recharge
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -118,7 +139,9 @@ export default function EVSavingsPage() {
 
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-green-600">💰</span>
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                   Avantages fiscaux
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -127,6 +150,13 @@ export default function EVSavingsPage() {
               </div>
             </div>
           </section>
+
+          {/* Ad Placement 4 - Before FAQ (Desktop Only) */}
+          <div className="hidden lg:flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* FAQ Section */}
           <section className="mt-12 bg-white rounded-xl shadow-lg p-8">
@@ -140,6 +170,13 @@ export default function EVSavingsPage() {
                   Les véhicules électriques modernes offrent entre 300 et 500 km d'autonomie. 
                   Parfait pour la majorité des déplacements quotidiens au Québec.
                 </p>
+              </div>
+
+              {/* Ad Placement 3 - Middle of FAQ (Mobile Only) */}
+              <div className="lg:hidden flex justify-center py-4">
+                <div className="max-w-3xl w-full">
+                  <AdSenseAd adSlot="7290777867" />
+                </div>
               </div>
 
               <div className="border-b pb-4">

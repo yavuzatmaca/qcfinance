@@ -3,10 +3,8 @@
  * Uses jsPDF to generate downloadable PDF reports
  */
 
-import type { SimulatorResult } from '@/src/hooks/useSimulator';
-
 export interface PDFExportOptions {
-  result: SimulatorResult;
+  result: any;
   grossSalary: number;
   hasPartner: boolean;
   hasCar: boolean;

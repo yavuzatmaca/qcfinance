@@ -29,16 +29,20 @@ export default function LastUpdatedBadge({
     )
   }
 
-  // Compact variant
+  // Compact variant - ultra minimal
   if (variant === 'compact') {
     return (
-      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] md:text-xs font-semibold whitespace-nowrap ${
         theme === 'dark'
-          ? 'bg-white/10 border border-white/20 text-slate-300'
-          : 'bg-blue-100 text-blue-800'
+          ? 'bg-emerald-500/20 border border-emerald-400/50 text-emerald-300'
+          : 'bg-emerald-50 border border-emerald-300 text-emerald-700'
       }`}>
-        <Calendar className="w-3 h-3" aria-hidden="true" />
-        {date}
+        <Calendar className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
+        <span className="hidden sm:inline">Mis à jour: </span>
+        <span>{date}</span>
+        <span className={`w-1.5 h-1.5 rounded-full animate-pulse flex-shrink-0 ${
+          theme === 'dark' ? 'bg-emerald-400' : 'bg-emerald-500'
+        }`} aria-hidden="true" />
       </span>
     )
   }

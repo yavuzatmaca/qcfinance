@@ -2,12 +2,16 @@
 
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import { X, Share2, Bookmark } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export default function DaycareClient() {
   const [income, setIncome] = useState<number>(90000)
   const [dailyRate, setDailyRate] = useState<number>(50)
   const [days, setDays] = useState<number>(260)
   const [children, setChildren] = useState<number>(1)
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   const CPE_RATE = 9.10 // Fixed CPE rate for 2026
 
@@ -53,125 +57,213 @@ export default function DaycareClient() {
     }).format(value)
   }
 
+  const handleShare = async () => {
+    const text = `👶 Frais de Garde:\n💰 Coût réel: ${formatCurrency(netDailyCost)}/jour\n📊 Crédits: ${govContribution.toFixed(0)}%\n💵 Annuel: ${formatCurrency(annualNetCost)}\n\nCalculé sur QCFinance.ca`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href });
+      } catch (err) {
+        navigator.clipboard.writeText(text);
+        alert('✅ Copié dans le presse-papier!');
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('✅ Copié dans le presse-papier!');
+    }
+  };
+
+  const handleSave = () => {
+    const calc = { id: Date.now(), income, dailyRate, days, children, netDailyCost, timestamp: new Date().toISOString() };
+    const saved = JSON.parse(localStorage.getItem('qc-daycare-calcs') || '[]');
+    localStorage.setItem('qc-daycare-calcs', JSON.stringify([calc, ...saved].slice(0, 3)));
+    
+    const btn = document.getElementById('save-btn');
+    if (btn) {
+      btn.classList.add('scale-110', 'bg-green-500');
+      setTimeout(() => btn.classList.remove('scale-110', 'bg-green-500'), 500);
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      {/* Left Column - Inputs */}
-      <div className="lg:col-span-5 space-y-6 order-2 lg:order-none">
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-rose-200 p-8">
-          <h2 className="text-2xl font-bold text-purple-900 mb-6 flex items-center gap-2">
-            <span className="text-3xl">👶</span>
-            Votre situation
-          </h2>
-
-          {/* Income */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Revenu familial net : {formatCurrency(income)}
-            </label>
-            <input
-              type="range"
-              min="20000"
-              max="200000"
-              step="5000"
-              value={income}
-              onChange={(e) => setIncome(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>20k</span>
-              <span>200k</span>
+    <>
+      {/* MOBILE ONLY: Sticky Bar */}
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-purple-600 to-rose-600 shadow-lg">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-purple-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {formatCurrency(netDailyCost)}/jour
+                </div>
+                <div className="text-white/70 text-xs">
+                  {formatCurrency(annualNetCost)}/an • {children} enfant{children > 1 ? 's' : ''}
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Daily Rate */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Coût par jour (garderie privée)
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-semibold">$</span>
-              <input
-                type="number"
-                value={dailyRate || ''}
-                onChange={(e) => setDailyRate(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                step="5"
-                min="35"
-                max="80"
-              />
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
-            <div className="mt-2 flex gap-2">
-              {[40, 50, 60].map((quickRate) => (
-                <button
-                  key={quickRate}
-                  onClick={() => setDailyRate(quickRate)}
-                  className="flex-1 py-1 px-2 bg-rose-100 hover:bg-rose-200 text-rose-900 rounded text-xs font-semibold transition-colors"
-                >
-                  {quickRate}$
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Days per year */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Jours de garde par année : {days}
-            </label>
-            <input
-              type="range"
-              min="200"
-              max="260"
-              step="10"
-              value={days}
-              onChange={(e) => setDays(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
-            />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
-              <span>200</span>
-              <span>260</span>
-            </div>
-            <p className="text-xs text-slate-600 mt-1">
-              ~{Math.round(days / 5)} semaines de garde
-            </p>
-          </div>
-
-          {/* Number of children */}
-          <div className="mb-6">
-            <label className="block text-sm font-bold text-slate-700 mb-3">
-              Nombre d'enfants
-            </label>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setChildren(Math.max(1, children - 1))}
-                className="w-12 h-12 bg-rose-100 hover:bg-rose-200 text-rose-900 rounded-xl font-bold text-xl transition-colors"
-              >
-                −
-              </button>
-              <div className="flex-1 text-center">
-                <div className="text-4xl font-bold text-purple-900">{children}</div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Frais de Garde</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
               </div>
               <button
-                onClick={() => setChildren(Math.min(5, children + 1))}
-                className="w-12 h-12 bg-rose-100 hover:bg-rose-200 text-rose-900 rounded-xl font-bold text-xl transition-colors"
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
               >
-                +
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="text-white/80 text-xs font-semibold mb-1">Coût réel</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(netDailyCost)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-white/80 text-xs font-semibold mb-1">Annuel</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(annualNetCost)}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Revenu familial
+                </label>
+                <input
+                  type="range"
+                  min="20000"
+                  max="200000"
+                  step="5000"
+                  value={income}
+                  onChange={(e) => setIncome(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(income)}</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Coût par jour
+                </label>
+                <input
+                  type="range"
+                  min="35"
+                  max="80"
+                  step="5"
+                  value={dailyRate}
+                  onChange={(e) => setDailyRate(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(dailyRate)}</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Jours par année
+                </label>
+                <input
+                  type="range"
+                  min="200"
+                  max="260"
+                  step="10"
+                  value={days}
+                  onChange={(e) => setDays(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{days} jours</div>
+              </div>
+
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Nombre d'enfants
+                </label>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setChildren(Math.max(1, children - 1))}
+                    className="flex-1 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                  >
+                    −
+                  </button>
+                  <div className="text-white text-2xl font-bold">{children}</div>
+                  <button
+                    onClick={() => setChildren(Math.min(5, children + 1))}
+                    className="flex-1 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                id="save-btn"
+                onClick={handleSave}
+                className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Bookmark className="w-4 h-4" />
+                Sauvegarder
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
               </button>
             </div>
           </div>
+        )}
+      </div>
 
-          {/* Info Box */}
-          <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
-            <div className="flex gap-3">
-              <div className="text-2xl">ℹ️</div>
-              <div>
-                <h3 className="font-bold text-purple-900 text-sm mb-1">
-                  Crédit d'impôt : {(taxCreditRate * 100).toFixed(0)}%
-                </h3>
-                <p className="text-xs text-purple-800">
-                  Avec votre revenu de {formatCurrency(income)}, vous avez droit à un crédit 
-                  d'impôt remboursable de {(taxCreditRate * 100).toFixed(0)}% sur vos frais de garde.
-                </p>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Left Column - Empty on mobile, Info on desktop */}
+      <div className="lg:col-span-5 space-y-6 order-2 lg:order-none">
+        {/* Info Box - Desktop Only */}
+        <div className="hidden lg:block bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
+          <div className="flex gap-3">
+            <svg className="w-6 h-6 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h3 className="font-bold text-purple-900 text-base mb-2">
+                Crédit d'impôt : {(taxCreditRate * 100).toFixed(0)}%
+              </h3>
+              <p className="text-sm text-purple-800 mb-3">
+                Avec votre revenu de {formatCurrency(income)}, vous avez droit à un crédit 
+                d'impôt remboursable de {(taxCreditRate * 100).toFixed(0)}% sur vos frais de garde.
+              </p>
+              <div className="text-xs text-purple-700 bg-white rounded-lg p-3">
+                <strong>Astuce:</strong> Utilisez la barre en haut pour ajuster vos paramètres rapidement!
               </div>
             </div>
           </div>
@@ -362,5 +454,28 @@ export default function DaycareClient() {
         </div>
       </div>
     </div>
+
+    {/* Sticky Bottom Ad - Mobile Only */}
+    {showStickyAd && (
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
+        <div className="relative">
+          <button
+            onClick={() => setShowStickyAd(false)}
+            className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+            aria-label="Fermer la publicité"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <div className="p-4 pb-6">
+            <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+            <AdSenseAd 
+              adSlot="7290777867"
+              adFormat="auto"
+            />
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }

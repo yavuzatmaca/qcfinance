@@ -4,6 +4,7 @@ import { TrendingUp, Sparkles, DollarSign, Clock } from 'lucide-react'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: "Intérêts Composés Québec 2026 | Calculateur Investissement",
@@ -30,6 +31,13 @@ export default function CompoundInterestPage() {
 
           <div className="mb-12">
             <CompoundInterestClient />
+          </div>
+
+          {/* Ad Placement 1 - After Calculator */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
           </div>
 
           {/* Smart Cross-Link */}
@@ -78,6 +86,13 @@ export default function CompoundInterestPage() {
               </div>
             </div>
           </section>
+
+          {/* Ad Placement 2 - After Educational Section */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* Rule of 72 Deep Dive Section */}
           <section className="mt-12 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl shadow-lg p-8 border-2 border-amber-200">

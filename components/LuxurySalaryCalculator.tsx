@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { calculateTaxes, formatCurrency } from '@/utils/taxLogic'
 import { generateSalaryPDF } from '@/utils/pdfGenerator'
 import InteractiveDonutChart from './ui/InteractiveDonutChart'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { useDebouncedAnalytics } from '@/hooks/useDebouncedAnalytics'
+import AdSenseAd from '@/components/AdSenseAd'
+import { DollarSign, TrendingUp, Calculator, X } from 'lucide-react'
 
 interface LuxurySalaryCalculatorProps {
   initialIncome: number
@@ -23,10 +25,26 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(true)
   const [isChartOpen, setIsChartOpen] = useState(false)
   const [isRRSPOpen, setIsRRSPOpen] = useState(false)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
+  const [showStickyAd, setShowStickyAd] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   
   // Analytics tracking
   const trackEvent = useDebouncedAnalytics(800)
+  
+  // Quick preset salaries
+  const quickPresets = [40000, 60000, 80000, 100000, 120000]
+  
+  // Handle quick preset click
+  const handlePresetClick = (salary: number) => {
+    setAnnualGross(salary)
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'quick_preset_click', {
+        calculator: 'salary',
+        preset_value: salary,
+      })
+    }
+  }
   
   // Calculate the display value based on the current pay period
   const getDisplayValue = () => {
@@ -114,8 +132,224 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
       }, 300)
     }
   }
+  
+  // Handle share
+  const handleShare = () => {
+    const hasNativeShare = typeof navigator !== 'undefined' && 'share' in navigator
+    
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'share', {
+        event_category: 'Engagement',
+        event_label: 'Salary Result',
+        method: hasNativeShare ? 'native' : 'clipboard',
+      })
+    }
+    
+    if (hasNativeShare) {
+      navigator.share({
+        title: 'Mon Salaire Net',
+        text: `Salaire Net: ${formatCurrency(results.netIncome)} sur ${formatCurrency(results.grossIncome)} brut`,
+        url: window.location.href
+      }).catch(() => {})
+    } else {
+      navigator.clipboard.writeText(`Salaire Net: ${formatCurrency(results.netIncome)} sur ${formatCurrency(results.grossIncome)} brut - ${window.location.href}`)
+      alert('Lien copié dans le presse-papiers!')
+    }
+  }
+  
+  // Save scenario to localStorage
+  const handleSave = () => {
+    if (typeof window !== 'undefined') {
+      const scenarios = JSON.parse(localStorage.getItem('salary_scenarios') || '[]')
+      const newScenario = {
+        id: Date.now(),
+        gross: annualGross,
+        net: results.netIncome,
+        date: new Date().toISOString(),
+      }
+      scenarios.push(newScenario)
+      localStorage.setItem('salary_scenarios', JSON.stringify(scenarios.slice(-5))) // Keep last 5
+      alert('Scénario sauvegardé!')
+      
+      if ((window as any).gtag) {
+        (window as any).gtag('event', 'save_scenario', {
+          calculator: 'salary',
+          gross_income: annualGross,
+        })
+      }
+    }
+  }
 
   return (
+    <>
+      {/* Mobile Sticky Quick Calculator - VIP Feature (Result Pages Only) */}
+      {initialIncome > 0 && (
+        <div className="lg:hidden sticky top-16 z-30 mb-4 shadow-lg">
+          <div className={`bg-gradient-to-r from-emerald-600 to-teal-600 text-white transition-all duration-300 ${isQuickCalcExpanded ? '' : ''}`}>
+            {/* Collapsed State - Minimal Info */}
+            {!isQuickCalcExpanded && (
+              <button
+                onClick={() => setIsQuickCalcExpanded(true)}
+                className="w-full px-4 py-3 flex items-center justify-between touch-manipulation active:bg-emerald-700 transition-colors"
+                style={{ minHeight: '48px' }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <Calculator className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-white text-xl font-bold leading-tight">
+                      {formatCurrency(results.netIncome)}
+                    </div>
+                    <div className="text-white/70 text-xs">
+                      Taux: {((results.totalDeductions / results.grossIncome) * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-white/80">
+                  <span className="text-xs font-semibold">Modifier</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+            )}
+
+            {/* Expanded State - Full Calculator */}
+            {isQuickCalcExpanded && (
+              <div className="animate-slide-down">
+                <div className="px-4 py-3 flex items-center justify-between border-b border-white/20">
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                      <Calculator className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base">Calculateur Rapide</h3>
+                      <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsQuickCalcExpanded(false)}
+                    className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+                    style={{ minHeight: '44px' }}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {/* Quick Presets */}
+                  <div>
+                    <div className="text-xs font-semibold mb-2 text-white/90">Salaires Populaires</div>
+                    <div className="grid grid-cols-5 gap-2">
+                      {quickPresets.map((preset) => (
+                        <button
+                          key={preset}
+                          onClick={() => handlePresetClick(preset)}
+                          className={`px-2 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 touch-manipulation ${
+                            annualGross === preset
+                              ? 'bg-white text-emerald-600 shadow-lg'
+                              : 'bg-white/20 hover:bg-white/30 text-white'
+                          }`}
+                          style={{ minHeight: '44px' }}
+                        >
+                          {(preset / 1000).toFixed(0)}k
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Input */}
+                  <div>
+                    <label className="block text-xs font-semibold mb-1.5 text-white/90">Revenu Brut Annuel</label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70" />
+                      <input
+                        type="number"
+                        inputMode="decimal"
+                        value={getDisplayValue()}
+                        onChange={(e) => handleIncomeChange(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-center font-bold focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm touch-manipulation"
+                        style={{ minHeight: '44px' }}
+                        placeholder="50000"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Results Grid */}
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <div className="bg-white/20 rounded-lg p-2 text-center">
+                      <div className="text-xs text-white/70 mb-0.5">Net Annuel</div>
+                      <div className="text-sm font-bold">{formatCurrency(results.netIncome)}</div>
+                    </div>
+                    <div className="bg-white/20 rounded-lg p-2 text-center">
+                      <div className="text-xs text-white/70 mb-0.5">Net Mensuel</div>
+                      <div className="text-sm font-bold">{formatCurrency(results.netIncome / 12)}</div>
+                    </div>
+                    <div className="bg-white/20 rounded-lg p-2 text-center">
+                      <div className="text-xs text-white/70 mb-0.5">Déductions</div>
+                      <div className="text-sm font-bold">{formatCurrency(results.totalDeductions)}</div>
+                    </div>
+                    <div className="bg-white/20 rounded-lg p-2 text-center">
+                      <div className="text-xs text-white/70 mb-0.5">Taux Effectif</div>
+                      <div className="text-sm font-bold">{((results.totalDeductions / results.grossIncome) * 100).toFixed(1)}%</div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <button
+                      onClick={handleShare}
+                      className="px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg font-semibold text-xs active:scale-95 transition-all touch-manipulation flex items-center justify-center gap-1.5"
+                      style={{ minHeight: '44px' }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                      Partager
+                    </button>
+                    <button
+                      onClick={handleSave}
+                      className="px-3 py-2 bg-white text-emerald-600 hover:bg-white/90 rounded-lg font-semibold text-xs active:scale-95 transition-all touch-manipulation flex items-center justify-center gap-1.5"
+                      style={{ minHeight: '44px' }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                      Sauvegarder
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Bottom Ad - Mobile Only */}
+      {showStickyAd && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
+          <div className="relative">
+            <button
+              onClick={() => setShowStickyAd(false)}
+              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+              aria-label="Fermer la publicité"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="p-4 pb-6">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd 
+                adSlot="7290777867"
+                adFormat="auto"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
     <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
       {/* Header and Input Section - Only show on landing page */}
       {initialIncome === 0 && (
@@ -241,6 +475,15 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
           </button>
         </div>
       )}
+
+      {/* AdSense Reklam - Buton Altı */}
+      {initialIncome === 0 && (
+        <div className="mb-8 flex justify-center">
+          <div className="w-full max-w-2xl">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
+      )}
         </>
       )}
 
@@ -287,6 +530,15 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
               </div>
             </div>
           </div>
+
+          {/* AdSense - Après résultats, avant détails */}
+          {initialIncome > 0 && (
+            <div className="flex justify-center py-4 md:py-6">
+              <div className="w-full max-w-2xl">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
+          )}
 
           {/* Detailed Breakdown - Collapsible */}
           <div className="border-t border-slate-200 pt-8">
@@ -607,30 +859,9 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
           <div className="border-t border-slate-200 pt-6">
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => {
-                  const hasNativeShare = typeof navigator !== 'undefined' && 'share' in navigator;
-                  
-                  // Track share event
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('event', 'share', {
-                      event_category: 'Engagement',
-                      event_label: 'Salary Result',
-                      method: hasNativeShare ? 'native' : 'clipboard',
-                    })
-                  }
-                  
-                  if (hasNativeShare) {
-                    navigator.share({
-                      title: 'Mon Salaire Net',
-                      text: `Salaire Net: ${formatCurrency(results.netIncome)} sur ${formatCurrency(results.grossIncome)} brut`,
-                      url: window.location.href
-                    }).catch(() => {});
-                  } else {
-                    navigator.clipboard.writeText(`Salaire Net: ${formatCurrency(results.netIncome)} sur ${formatCurrency(results.grossIncome)} brut - ${window.location.href}`);
-                    alert('Lien copié dans le presse-papiers!');
-                  }
-                }}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors"
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors touch-manipulation active:scale-95"
+                style={{ minHeight: '48px' }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -638,24 +869,14 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
                 Partager
               </button>
               <button
-                onClick={() => {
-                  generateSalaryPDF(results, payPeriod);
-                  
-                  // Track PDF download
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('event', 'download_pdf', {
-                      event_category: 'Engagement',
-                      event_label: 'Salary PDF',
-                      value: Math.round(results.grossIncome),
-                    })
-                  }
-                }}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors"
+                onClick={handleSave}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors touch-manipulation active:scale-95"
+                style={{ minHeight: '48px' }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
-                Imprimer
+                Sauvegarder
               </button>
             </div>
           </div>
@@ -739,5 +960,6 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
         </div>
       )}
     </div>
+    </>
   )
 }

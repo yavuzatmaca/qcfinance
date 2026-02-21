@@ -2,11 +2,15 @@
 
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import { CreditCard, Share2, Bookmark, X, AlertTriangle, CheckCircle } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export default function DebtClient() {
   const [balance, setBalance] = useState<number>(5000)
   const [interestRate, setInterestRate] = useState<number>(19.99)
   const [monthlyPayment, setMonthlyPayment] = useState<number>(200)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
+  const [showStickyAd, setShowStickyAd] = useState(true)
 
   // Calculate minimum payment (typically 3% of balance or $10, whichever is greater)
   const minimumPayment = Math.max(10, balance * 0.03)
@@ -58,13 +62,169 @@ export default function DebtClient() {
   const isDangerous = monthlyPayment <= minimumPayment * 1.1 // Within 10% of minimum
   const isImpossible = monthsToPayoff > 500
 
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Calculateur de Dette',
+      text: `Libre de dettes en ${Math.round(monthsToPayoff)} mois!\nÉconomie: ${formatCurrency(Math.max(0, totalInterestMinimum - totalInterest))}`,
+      url: window.location.href,
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        // Share cancelled
+      }
+    } else {
+      navigator.clipboard.writeText(`${shareData.text} - ${shareData.url}`)
+      alert('Copié dans le presse-papier!')
+    }
+  }
+
   return (
+    <>
+      {/* MOBILE ONLY: Minimal + Expandable Sticky Bar */}
+      <div className="lg:hidden sticky top-16 z-40 bg-gradient-to-r from-red-600 to-orange-600 shadow-lg mb-4">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-red-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {isImpossible ? 'Paiement insuffisant!' : `${Math.round(monthsToPayoff)} mois`}
+                </div>
+                <div className="text-white/70 text-xs">
+                  {isImpossible ? 'Augmentez votre paiement' : `Intérêts: ${formatCurrency(totalInterest)}`}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Calculateur de Dette</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Quick Inputs Grid */}
+            <div className="space-y-3">
+              {/* Balance */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Solde de la dette
+                </label>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={balance}
+                  onChange={(e) => setBalance(Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-center font-bold focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm min-h-[44px] touch-manipulation"
+                  placeholder="5000"
+                />
+              </div>
+
+              {/* Interest Rate */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Taux d'intérêt: {interestRate.toFixed(1)}%
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="30"
+                  step="0.5"
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(Number(e.target.value))}
+                  className="w-full accent-white touch-manipulation"
+                />
+              </div>
+
+              {/* Monthly Payment */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Paiement mensuel
+                </label>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={monthlyPayment}
+                  onChange={(e) => setMonthlyPayment(Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-center font-bold focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm min-h-[44px] touch-manipulation"
+                  placeholder="200"
+                />
+              </div>
+            </div>
+
+            {/* Result Display */}
+            <div className="mt-4 p-4 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
+              <div className="text-center">
+                <div className="text-white/80 text-xs font-medium mb-1">
+                  {isImpossible ? 'Paiement insuffisant' : 'Libre de dettes en'}
+                </div>
+                <div className="text-white text-3xl font-bold">
+                  {isImpossible ? '∞' : `${Math.round(monthsToPayoff)} mois`}
+                </div>
+                <div className="text-white/70 text-xs mt-1">
+                  {isImpossible ? 'Augmentez votre paiement' : `Intérêts: ${formatCurrency(totalInterest)}`}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            {!isImpossible && (
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                <button
+                  onClick={handleShare}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/20 hover:bg-white/30 rounded-lg text-white text-xs font-semibold transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Partager
+                </button>
+                <button
+                  onClick={() => alert('Scénario sauvegardé!')}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/20 hover:bg-white/30 rounded-lg text-white text-xs font-semibold transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                >
+                  <Bookmark className="w-4 h-4" />
+                  Sauvegarder
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Column - Inputs */}
       <div className="lg:col-span-5 space-y-6 order-2 lg:order-none">
         <div className="bg-white rounded-2xl shadow-lg border-2 border-slate-300 p-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-            <span className="text-3xl">💳</span>
+            <CreditCard className="w-7 h-7 text-red-600" />
             Votre dette
           </h2>
 
@@ -77,9 +237,10 @@ export default function DebtClient() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-semibold">$</span>
               <input
                 type="number"
+                inputMode="decimal"
                 value={balance || ''}
                 onChange={(e) => setBalance(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 min-h-[44px] touch-manipulation"
                 step="100"
               />
             </div>
@@ -88,7 +249,7 @@ export default function DebtClient() {
                 <button
                   key={quickAmount}
                   onClick={() => setBalance(quickAmount)}
-                  className="flex-1 py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded text-xs font-semibold transition-colors"
+                  className="flex-1 py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded text-xs font-semibold transition-colors min-h-[44px] touch-manipulation active:scale-95"
                 >
                   {quickAmount / 1000}k
                 </button>
@@ -115,8 +276,11 @@ export default function DebtClient() {
               <span>30%</span>
             </div>
             <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-xs text-red-700">
-                💡 <strong>Taux moyen carte de crédit :</strong> 19.99%
+              <p className="text-xs text-red-700 flex items-center gap-1">
+                <svg className="w-3 h-3 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                </svg>
+                <strong>Taux moyen carte de crédit :</strong> 19.99%
               </p>
             </div>
           </div>
@@ -130,9 +294,10 @@ export default function DebtClient() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-semibold">$</span>
               <input
                 type="number"
+                inputMode="decimal"
                 value={monthlyPayment || ''}
                 onChange={(e) => setMonthlyPayment(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full pl-10 pr-4 py-3 text-xl font-bold border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 min-h-[44px] touch-manipulation"
                 step="10"
               />
             </div>
@@ -145,7 +310,7 @@ export default function DebtClient() {
           {isDangerous && (
             <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4">
               <div className="flex gap-3">
-                <div className="text-2xl">⚠️</div>
+                <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
                 <div>
                   <h3 className="font-bold text-red-900 text-sm mb-1">
                     Attention !
@@ -167,7 +332,11 @@ export default function DebtClient() {
           {!isImpossible ? (
             <div className="bg-gradient-to-br from-emerald-600 to-green-700 rounded-2xl shadow-2xl p-8 lg:p-10 text-white">
               <div className="text-center">
-                <div className="text-5xl mb-3">🎉</div>
+                <div className="mb-3 flex justify-center">
+                  <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
                 <h2 className="text-lg font-medium opacity-90 mb-2">
                   Libre de dettes en
                 </h2>
@@ -188,7 +357,9 @@ export default function DebtClient() {
           ) : (
             <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-2xl shadow-2xl p-8 lg:p-10 text-white">
               <div className="text-center">
-                <div className="text-5xl mb-3">🚨</div>
+                <div className="mb-3 flex justify-center">
+                  <AlertTriangle className="w-16 h-16" />
+                </div>
                 <h2 className="text-2xl font-bold mb-4">
                   Paiement insuffisant !
                 </h2>
@@ -207,7 +378,9 @@ export default function DebtClient() {
           {isDangerous && !isImpossible && (
             <div className="bg-red-50 border-4 border-red-400 rounded-2xl p-6">
               <div className="text-center mb-4">
-                <div className="text-4xl mb-2">⚠️</div>
+                <div className="mb-2 flex justify-center">
+                  <AlertTriangle className="w-12 h-12 text-red-600" />
+                </div>
                 <h3 className="text-xl font-bold text-red-900 mb-2">
                   Le piège du paiement minimum
                 </h3>
@@ -231,7 +404,7 @@ export default function DebtClient() {
                 <div>
                   <div className="flex justify-between items-baseline mb-2">
                     <span className="font-bold text-emerald-700 flex items-center gap-2">
-                      <span className="text-2xl">✅</span>
+                      <CheckCircle className="w-6 h-6" />
                       Votre plan ({formatCurrency(monthlyPayment)}/mois)
                     </span>
                     <span className="text-lg font-bold text-emerald-900">{Math.round(monthsToPayoff)} mois</span>
@@ -253,7 +426,9 @@ export default function DebtClient() {
                   <div>
                     <div className="flex justify-between items-baseline mb-2">
                       <span className="font-bold text-red-700 flex items-center gap-2">
-                        <span className="text-2xl">❌</span>
+                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
                         Paiement minimum ({formatCurrency(minimumPayment)}/mois)
                       </span>
                       <span className="text-lg font-bold text-red-900">{Math.round(monthsMinimum)} mois</span>
@@ -340,7 +515,9 @@ export default function DebtClient() {
           {!isImpossible && (
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 p-6">
               <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                <span className="text-2xl">💡</span>
+                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                </svg>
                 Payez plus, économisez plus
               </h4>
               <p className="text-sm text-blue-800 mb-3">
@@ -363,5 +540,24 @@ export default function DebtClient() {
         </div>
       </div>
     </div>
+
+      {/* STICKY BOTTOM AD - Mobile Only */}
+      {showStickyAd && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
+          <div className="relative">
+            <button
+              onClick={() => setShowStickyAd(false)}
+              className="absolute -top-8 right-2 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-700 transition-colors z-10 touch-manipulation active:scale-95"
+              aria-label="Fermer la publicité"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="min-h-[100px] flex items-center justify-center">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

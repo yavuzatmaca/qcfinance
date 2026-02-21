@@ -5,6 +5,7 @@ import StructuredData from '@/components/StructuredData'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: 'Prêt Auto Québec 2026 | Calculateur Financement',
@@ -67,6 +68,13 @@ export default function AutoLoanPage() {
           <AutoLoanClient />
         </div>
 
+        {/* Ad Placement 1 - After Calculator */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
+
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-salary" />
 
@@ -112,6 +120,13 @@ export default function AutoLoanPage() {
             </div>
           </div>
         </section>
+
+        {/* Ad Placement 2 - After Educational Section */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
 
         {/* Pro Tips Section - V2 Gold Standard */}
         <section className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8">

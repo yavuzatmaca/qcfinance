@@ -92,8 +92,6 @@ export async function getMarketData(): Promise<MarketRate[]> {
       },
     ];
   } catch (error) {
-    console.error('Failed to fetch market data from Bank of Canada:', error);
-    
     // Fallback to static data (Updated: January 2025)
     return [
       { label: 'Taux Directeur', value: '2.25%', change: '-0.25%' },

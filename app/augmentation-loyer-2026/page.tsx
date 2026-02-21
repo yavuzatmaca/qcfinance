@@ -4,6 +4,7 @@ import { Scale, FileText, TrendingUp } from 'lucide-react'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: 'Calculateur Augmentation de Loyer Québec 2026 - TAL (Tribunal Logement)',
@@ -54,6 +55,13 @@ export default function RentIncreasePage() {
         {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
         <RentIncreaseClient />
 
+        {/* AdSense - Après calculator */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="w-full max-w-3xl">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
+
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-affordability" />
 
@@ -97,6 +105,13 @@ export default function RentIncreasePage() {
             </div>
           </div>
         </section>
+
+        {/* AdSense - Après section éducative */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="w-full max-w-3xl">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
 
         {/* Pro Tips Section - V2 Gold Standard */}
         <section className="mt-12 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg p-8">

@@ -13,7 +13,6 @@ export async function GET() {
       slots: siteConfig.ads.slots
     })
   } catch (error) {
-    console.error('Error reading ads config:', error)
     return NextResponse.json(
       { error: 'Failed to load ads configuration' },
       { status: 500 }
@@ -36,7 +35,6 @@ export async function POST(request: Request) {
       receivedConfig: newConfig
     }, { status: 200 })
   } catch (error) {
-    console.error('Error updating ads config:', error)
     return NextResponse.json(
       { error: 'Failed to update ads configuration' },
       { status: 500 }

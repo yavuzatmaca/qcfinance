@@ -5,6 +5,7 @@ import StructuredData from '@/components/StructuredData'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: 'TPS TVQ Québec 2026 | Calculateur Taxes de Vente',
@@ -66,6 +67,14 @@ export default function SalesTaxPage() {
           <SalesTaxClient />
         </div>
 
+        {/* AdSense - Après calculator */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="w-full max-w-3xl">
+            <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+            <AdSenseAd adSlot="7290777867" adFormat="fluid" />
+          </div>
+        </div>
+
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-salary" />
 
@@ -110,6 +119,14 @@ export default function SalesTaxPage() {
           </div>
         </section>
 
+        {/* AdSense - Après section éducative (Desktop Only) */}
+        <div className="hidden lg:flex justify-center py-6 md:py-8">
+          <div className="w-full max-w-3xl">
+            <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
+
         {/* Pro Tips Section - V2 Gold Standard - Mobile Optimized */}
         <section className="mt-8 md:mt-12 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl md:rounded-xl shadow-lg p-5 md:p-8">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 text-center">
@@ -118,10 +135,12 @@ export default function SalesTaxPage() {
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             <div className="bg-white rounded-xl md:rounded-lg p-4 md:p-6">
               <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm md:text-base">
-                <span className="text-violet-600">💡</span>
-                Réclamez vos crédits de TPS/TVQ
+                <svg className="w-5 h-5 text-violet-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                </svg>
+                <span>Réclamez vos crédits de TPS/TVQ</span>
               </h3>
-              <p className="text-xs md:text-sm text-gray-600">
+              <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                 Si votre revenu est faible ou modeste, vous pourriez avoir droit au <strong>crédit de TPS/TVQ</strong> 
                 (jusqu'à 467$ par année). Remplissez votre déclaration de revenus pour en bénéficier automatiquement.
               </p>
@@ -129,10 +148,12 @@ export default function SalesTaxPage() {
 
             <div className="bg-white rounded-xl md:rounded-lg p-4 md:p-6">
               <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm md:text-base">
-                <span className="text-violet-600">💡</span>
-                Achetez des produits de base
+                <svg className="w-5 h-5 text-violet-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                </svg>
+                <span>Achetez des produits de base</span>
               </h3>
-              <p className="text-xs md:text-sm text-gray-600">
+              <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                 Les <strong>aliments de base</strong> (fruits, légumes, viande, pain, lait) ne sont pas taxés. 
                 Privilégiez ces produits pour économiser sur vos achats d'épicerie.
               </p>
@@ -140,10 +161,12 @@ export default function SalesTaxPage() {
 
             <div className="bg-white rounded-xl md:rounded-lg p-4 md:p-6">
               <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm md:text-base">
-                <span className="text-violet-600">💡</span>
-                Utilisez une carte avec cashback
+                <svg className="w-5 h-5 text-violet-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                </svg>
+                <span>Utilisez une carte avec cashback</span>
               </h3>
-              <p className="text-xs md:text-sm text-gray-600">
+              <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                 Récupérez jusqu'à <strong>5% de remise en argent</strong> sur vos achats avec une bonne carte de crédit. 
                 Cela compense partiellement les taxes payées.
               </p>
@@ -151,10 +174,12 @@ export default function SalesTaxPage() {
 
             <div className="bg-white rounded-xl md:rounded-lg p-4 md:p-6">
               <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm md:text-base">
-                <span className="text-violet-600">💡</span>
-                Gardez vos reçus pour les entreprises
+                <svg className="w-5 h-5 text-violet-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+                </svg>
+                <span>Gardez vos reçus pour les entreprises</span>
               </h3>
-              <p className="text-xs md:text-sm text-gray-600">
+              <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                 Si vous êtes travailleur autonome ou propriétaire d'entreprise, vous pouvez <strong>récupérer la TPS/TVQ</strong> 
                 sur vos achats professionnels. Conservez tous vos reçus!
               </p>

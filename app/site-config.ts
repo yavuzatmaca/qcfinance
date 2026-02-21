@@ -12,9 +12,8 @@
 
 export interface AdSlotConfig {
   enabled: boolean;
-  type: 'adsense' | 'affiliate' | 'custom' | 'ezoic';
+  type: 'adsense' | 'affiliate' | 'custom';
   adId?: string;
-  placementId?: number; // For Ezoic
   html?: string;
   size?: string;
   description?: string;
@@ -49,42 +48,42 @@ export interface SiteConfig {
  */
 export const siteConfig: SiteConfig = {
   // ==========================================
-  // ADS CONFIGURATION - EZOIC
+  // ADS CONFIGURATION - GOOGLE ADSENSE
   // ==========================================
   ads: {
     isEnabled: true, // Master toggle for all ads
-    googleAdSenseId: 'ca-pub-2733523563879283', // Backup AdSense ID
+    googleAdSenseId: 'ca-pub-2733523563879283',
 
     slots: {
       // Header Banner - Top of page
       header: {
-        enabled: true,
-        type: 'ezoic',
-        placementId: 101, // Create this in Ezoic Dashboard
+        enabled: false,
+        type: 'adsense',
+        adId: '7290777867',
         description: 'Top banner ad - above fold'
       },
 
       // Sidebar Ad - Desktop only
       sidebar: {
-        enabled: true,
-        type: 'ezoic',
-        placementId: 102, // Create this in Ezoic Dashboard
+        enabled: false,
+        type: 'adsense',
+        adId: '7290777867',
         description: 'Sidebar ad - sticky'
       },
 
       // In-Article Ad - Middle of content
       inArticle: {
-        enabled: true,
-        type: 'ezoic',
-        placementId: 103, // Create this in Ezoic Dashboard
+        enabled: false,
+        type: 'adsense',
+        adId: '7290777867',
         description: 'Mid-content ad'
       },
 
       // Footer Banner - Bottom of page
       footer: {
-        enabled: true,
-        type: 'ezoic',
-        placementId: 104, // Create this in Ezoic Dashboard
+        enabled: false,
+        type: 'adsense',
+        adId: '7290777867',
         description: 'Bottom banner ad'
       },
 

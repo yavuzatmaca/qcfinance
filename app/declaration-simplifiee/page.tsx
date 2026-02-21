@@ -3,6 +3,7 @@ import DeclarationSimplifieeClient from './DeclarationSimplifieeClient'
 import { FileText, Receipt, Calendar, DollarSign, AlertTriangle, CheckCircle, Clock, Building2 } from 'lucide-react'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: "Déclaration Impôt Québec 2026 | Estimateur Gratuit PDF",
@@ -47,6 +48,12 @@ export default function DeclarationSimplifiee() {
       />
 
       <DeclarationSimplifieeClient />
+
+      {/* Ad - After Calculator */}
+      <div className="max-w-4xl mx-auto px-4 py-6 lg:py-8">
+        <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+        <AdSenseAd adSlot="7290777867" adFormat="fluid" />
+      </div>
       
       {/* Educational Content Sections */}
       <div className="bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-100 py-16">
@@ -123,6 +130,14 @@ export default function DeclarationSimplifiee() {
               </div>
             </div>
           </section>
+
+          {/* AdSense - After Educational Content */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="w-full max-w-3xl">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           {/* Section 2: Important Dates */}
           <section>
@@ -275,6 +290,14 @@ export default function DeclarationSimplifiee() {
             </div>
           </section>
 
+          {/* AdSense - Before FAQ */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="w-full max-w-3xl">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
+
           {/* Section 4: Comprehensive FAQ */}
           <section>
             <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">
@@ -362,6 +385,12 @@ export default function DeclarationSimplifiee() {
                   </ul>
                 </div>
               </details>
+
+              {/* Mobile Ad - Middle of FAQ */}
+              <div className="py-4">
+                <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+                <AdSenseAd adSlot="7290777867" adFormat="fluid" />
+              </div>
 
               <details className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 group">
                 <summary className="font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between">

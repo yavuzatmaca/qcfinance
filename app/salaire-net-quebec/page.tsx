@@ -5,7 +5,7 @@ import EmptyStatePreview from '@/components/ui/EmptyStatePreview'
 import DataSource from '@/components/ui/DataSource'
 import SalaryLinkGrid from '@/components/calculators/SalaryLinkGrid'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import EzoicAd from '@/components/EzoicAd'
+import AdSenseAd from '@/components/AdSenseAd'
 import { TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -80,9 +80,13 @@ export default function SalaryLandingPage() {
         showLastUpdated={true}
       />
 
-      {/* Ezoic Ad - Top Banner */}
+      {/* Ad Placement 1 - Top Banner (Desktop + Mobile) */}
       <div className="container mx-auto max-w-6xl px-4 pt-8">
-        <EzoicAd placementId={101} className="flex justify-center" />
+        <div className="flex justify-center">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
       </div>
 
       {/* 2. Main Content */}
@@ -91,8 +95,12 @@ export default function SalaryLandingPage() {
           <div className="lg:col-span-8 space-y-6">
             <LuxurySalaryCalculator initialIncome={0} />
             
-            {/* Ezoic Ad - Mid Content */}
-            <EzoicAd placementId={103} className="my-8" />
+            {/* Ad Placement 2 - After Calculator (Desktop + Mobile) */}
+            <div className="flex justify-center py-6 md:py-8">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
 
             {/* SEO Content Block */}
             <div className="prose prose-slate max-w-none bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
@@ -104,6 +112,13 @@ export default function SalaryLandingPage() {
                 Notre calculateur intègre tous les taux officiels 2026 pour vous donner une estimation précise et instantanée.
               </p>
             </div>
+            
+            {/* Ad Placement 3 - After Educational Content (Mobile Only) */}
+            <div className="lg:hidden flex justify-center py-6">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
           </div>
 
           {/* RIGHT: Sticky Sidebar (4 cols) - Hidden on Mobile */}
@@ -111,8 +126,12 @@ export default function SalaryLandingPage() {
             <div className="sticky top-8 space-y-6">
               <EmptyStatePreview />
               
-              {/* Ezoic Ad - Sidebar */}
-              <EzoicAd placementId={102} />
+              {/* Ad Placement 4 - Sidebar (Desktop Only) */}
+              <div className="flex justify-center">
+                <div className="w-full">
+                  <AdSenseAd adSlot="7290777867" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -258,6 +277,13 @@ export default function SalaryLandingPage() {
                 </div>
               </div>
             </div>
+            
+            {/* Ad Placement 5 - Before FAQ (Mobile Only) */}
+            <div className="lg:hidden my-6 flex justify-center not-prose">
+              <div className="w-full max-w-3xl">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
 
             <h2 className="text-3xl font-bold text-slate-900 mb-3 mt-8">
               Taux marginal vs taux effectif
@@ -268,7 +294,12 @@ export default function SalaryLandingPage() {
             </p>
 
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6 not-prose">
-              <h3 className="text-lg font-bold text-blue-900 mb-1.5">💡 Exemple concret</h3>
+              <h3 className="text-lg font-bold text-blue-900 mb-1.5">
+                <svg className="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Exemple concret
+              </h3>
               <p className="text-blue-800 text-sm">
                 Avec un salaire de 70 000$, votre taux marginal pourrait être de 37,12%, mais votre taux effectif sera d'environ 23% 
                 car les premiers dollars sont imposés à des taux plus bas grâce au système progressif canadien.
@@ -284,6 +315,13 @@ export default function SalaryLandingPage() {
           <h2 className="text-3xl font-bold text-slate-900 mb-4">
             Questions fréquentes
           </h2>
+          
+          {/* Ad Placement 6 - Middle of FAQ (Mobile Only) */}
+          <div className="lg:hidden my-6 flex justify-center">
+            <div className="w-full max-w-3xl">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
           
           <div className="space-y-4">
             {/* FAQ 1 */}
@@ -422,10 +460,12 @@ export default function SalaryLandingPage() {
         </div>
       </div>
 
-      {/* Ezoic Ad - Footer */}
-      <div className="bg-white py-8 border-t border-slate-100">
-        <div className="max-w-6xl mx-auto px-4">
-          <EzoicAd placementId={104} className="flex justify-center" />
+      {/* Ad Placement 7 - Footer (Desktop Only) */}
+      <div className="hidden lg:block bg-white py-8 border-t border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 flex justify-center">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
         </div>
       </div>
     </div>

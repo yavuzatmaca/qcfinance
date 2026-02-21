@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { HelpCircle, ChevronDown } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: "FAQ - Questions Fréquentes | QCFinance.ca",
@@ -170,7 +171,7 @@ export default function FAQPage() {
         </div>
         
         <div className="space-y-8">
-          {faqs.map((category, idx) => (
+          {faqs.slice(0, 3).map((category, idx) => (
             <div key={idx} className="bg-white rounded-xl shadow-lg p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-blue-600">
                 {category.category}
@@ -194,6 +195,47 @@ export default function FAQPage() {
               </div>
             </div>
           ))}
+        </div>
+        
+        {/* Ad Placement 1 - After First 3 Categories (High Engagement) */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {faqs.slice(3).map((category, idx) => (
+            <div key={idx} className="bg-white rounded-xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-blue-600">
+                {category.category}
+              </h2>
+              <div className="space-y-6">
+                {category.questions.map((faq, qIdx) => (
+                  <details key={qIdx} className="group">
+                    <summary className="flex items-start justify-between cursor-pointer list-none">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 group-open:text-blue-600 transition-colors">
+                          {faq.q}
+                        </h3>
+                      </div>
+                      <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform flex-shrink-0 ml-4 mt-1" />
+                    </summary>
+                    <div className="mt-4 pl-4 border-l-4 border-blue-200">
+                      <p className="text-gray-700 leading-relaxed">{faq.a}</p>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Ad Placement 2 - Before Contact CTA */}
+          <div className="flex justify-center py-6 md:py-8">
+            <div className="max-w-3xl w-full">
+              <AdSenseAd adSlot="7290777867" />
+            </div>
+          </div>
 
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white text-center">
             <h2 className="text-2xl font-bold mb-4">Vous ne trouvez pas votre réponse?</h2>

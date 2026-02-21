@@ -23,13 +23,12 @@ if (process.env.GA4_CREDENTIALS) {
       credentials
     });
   } catch (error) {
-    console.error('Failed to initialize GA4 client:', error);
+    // Silent fail
   }
 }
 
 export async function getAnalytics() {
   if (!analyticsDataClient || !propertyId) {
-    console.warn('GA4 not configured');
     return getMockData();
   }
 
@@ -49,7 +48,7 @@ export async function getAnalytics() {
       });
       activeNow = parseInt(realtimeData.rows?.[0]?.metricValues?.[0]?.value || '0');
     } catch (error) {
-      console.warn('Real-time data not available:', error);
+      // Silent fail
     }
 
     // Bugün ve dün
@@ -298,7 +297,6 @@ export async function getAnalytics() {
       trafficSourceStats,
     };
   } catch (error) {
-    console.error('Failed to fetch GA4 data:', error);
     return getMockData();
   }
 }

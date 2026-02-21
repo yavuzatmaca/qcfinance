@@ -3,11 +3,15 @@
 import { useState, useRef } from 'react'
 import { calculateTransferTax, Location, TransferTaxResult, formatCurrency, formatPercentage, getLocationName } from '@/utils/transferTaxLogic'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import { Home, Share2, Bookmark, X } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export default function TransferTaxCalculator() {
   const [propertyPrice, setPropertyPrice] = useState<string>('')
   const [location, setLocation] = useState<Location>('quebec')
   const [result, setResult] = useState<TransferTaxResult | null>(null)
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
   const resultsRef = useRef<HTMLDivElement>(null)
 
   const handleCalculate = () => {
@@ -28,7 +32,127 @@ export default function TransferTaxCalculator() {
     }
   }
 
+  const handleShare = async () => {
+    if (!result) return
+    const text = `🏠 Taxe de bienvenue: ${formatCurrency(result.totalTax)}\nPropriété: ${formatCurrency(result.propertyPrice)}\nÀ ${getLocationName(result.location)}\n\nCalculé sur QCFinance.ca`
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href })
+      } catch (err) {
+        navigator.clipboard.writeText(text)
+        alert('✅ Copié!')
+      }
+    } else {
+      navigator.clipboard.writeText(text)
+      alert('✅ Copié!')
+    }
+  }
+
   return (
+    <>
+      {/* MOBILE ONLY: Minimal + Expandable Sticky Bar */}
+      {result && (
+        <div className="lg:hidden sticky top-16 z-40 bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg mb-4">
+          {!isQuickCalcExpanded ? (
+            <button
+              onClick={() => setIsQuickCalcExpanded(true)}
+              className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-purple-700 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Home className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <div className="text-white text-xl font-bold leading-tight">
+                    {formatCurrency(result.totalTax)}
+                  </div>
+                  <div className="text-white/70 text-xs">
+                    Propriété: {formatCurrency(result.propertyPrice)}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-white/80">
+                <span className="text-xs font-semibold">Modifier</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+          ) : (
+            <div className="p-4 animate-slide-down">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <Home className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-base">Taxe de Bienvenue</h3>
+                    <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsQuickCalcExpanded(false)}
+                  className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+                <div className="text-white/80 text-xs font-semibold mb-1">Taxe à payer</div>
+                <div className="text-white text-2xl font-bold">{formatCurrency(result.totalTax)}</div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-white mb-2 block">Prix de la propriété</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm font-semibold">$</span>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={propertyPrice}
+                      onChange={(e) => setPropertyPrice(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 text-base font-bold bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 touch-manipulation"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleCalculate}
+                  className="w-full py-2.5 bg-white text-purple-600 rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                >
+                  Recalculer
+                </button>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('taxe-bienvenue-last', JSON.stringify({ propertyPrice, location }))
+                      alert('✅ Sauvegardé!')
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                  >
+                    <Bookmark className="w-4 h-4" />
+                    Sauvegarder
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Partager
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
     <div className="grid lg:grid-cols-3 gap-6">
       {/* Left Column - Input Form */}
       <div className="lg:col-span-1 space-y-6 order-2 lg:order-none">
@@ -48,10 +172,11 @@ export default function TransferTaxCalculator() {
                 <input
                   id="propertyPrice"
                   type="number"
+                  inputMode="decimal"
                   value={propertyPrice}
                   onChange={(e) => setPropertyPrice(e.target.value)}
                   placeholder="350000"
-                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg touch-manipulation min-h-[44px]"
                 />
               </div>
             </div>
@@ -94,7 +219,7 @@ export default function TransferTaxCalculator() {
 
             <button
               onClick={handleCalculate}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 text-lg"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 text-lg touch-manipulation active:scale-95 min-h-[44px]"
             >
               Calculer la taxe
             </button>
@@ -193,6 +318,26 @@ export default function TransferTaxCalculator() {
         )}
       </div>
     </div>
+
+      {/* Sticky Bottom Ad - Mobile Only */}
+      {showStickyAd && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
+          <div className="relative">
+            <button
+              onClick={() => setShowStickyAd(false)}
+              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+              aria-label="Fermer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="p-4 pb-6">
+              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+              <AdSenseAd adSlot="7290777867" adFormat="auto" />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

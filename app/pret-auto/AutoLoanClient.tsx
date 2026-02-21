@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
+import { X, Share2, Bookmark } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export default function AutoLoanClient() {
   const [price, setPrice] = useState<number>(35000)
@@ -9,6 +11,8 @@ export default function AutoLoanClient() {
   const [downPayment, setDownPayment] = useState<number>(0)
   const [rate, setRate] = useState<number>(7.99)
   const [term, setTerm] = useState<number>(60)
+  const [showStickyAd, setShowStickyAd] = useState(true)
+  const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   const TAX_RATE = 0.14975 // 14.975% (TPS + TVQ)
 
@@ -46,13 +50,207 @@ export default function AutoLoanClient() {
 
   const isLongTerm = term > 72
 
+  // Share functionality
+  const handleShare = async () => {
+    const text = `🚗 Prêt Auto:\n💵 ${formatCurrency(price)}\n📅 ${term} mois\n💳 ${formatCurrency(biWeeklyPayment)}/2 semaines\n\nCalculé sur QCFinance.ca`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: window.location.href });
+      } catch (err) {
+        copyToClipboard(text);
+      }
+    } else {
+      copyToClipboard(text);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert('✅ Copié dans le presse-papier!');
+  };
+
+  const handleSave = () => {
+    const calc = { id: Date.now(), price, rate, term, biWeeklyPayment, timestamp: new Date().toISOString() };
+    const saved = JSON.parse(localStorage.getItem('qc-auto-calcs') || '[]');
+    localStorage.setItem('qc-auto-calcs', JSON.stringify([calc, ...saved].slice(0, 3)));
+    
+    const btn = document.getElementById('save-btn');
+    if (btn) {
+      btn.classList.add('scale-110', 'bg-green-500');
+      setTimeout(() => btn.classList.remove('scale-110', 'bg-green-500'), 500);
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <>
+      {/* MOBILE ONLY: Sticky Bar */}
+      <div className="lg:hidden sticky top-16 z-40 bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg">
+        {!isQuickCalcExpanded ? (
+          <button
+            onClick={() => setIsQuickCalcExpanded(true)}
+            className="w-full p-4 flex items-center justify-between touch-manipulation active:bg-blue-700 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-white text-xl font-bold leading-tight">
+                  {formatCurrency(biWeeklyPayment)}/2 sem
+                </div>
+                <div className="text-white/70 text-xs">
+                  {formatCurrency(price)} • {term} mois
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <span className="text-xs font-semibold">Modifier</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+        ) : (
+          <div className="p-4 animate-slide-down">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-base">Prêt Auto</h3>
+                  <p className="text-white/70 text-xs">Ajustez vos paramètres</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickCalcExpanded(false)}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center touch-manipulation active:scale-95 transition-all"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="text-white/80 text-xs font-semibold mb-1">Paiement bi-hebdo</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(biWeeklyPayment)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-white/80 text-xs font-semibold mb-1">Mensuel</div>
+                  <div className="text-white text-2xl font-bold">{formatCurrency(monthlyPayment)}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Inputs */}
+            <div className="space-y-3">
+              {/* Price Slider */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Prix du véhicule
+                </label>
+                <input
+                  type="range"
+                  min="10000"
+                  max="80000"
+                  step="1000"
+                  value={price}
+                  onChange={(e) => setPrice(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(price)}</div>
+              </div>
+
+              {/* Rate Slider */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Taux d'intérêt
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  step="0.25"
+                  value={rate}
+                  onChange={(e) => setRate(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{rate.toFixed(2)}%</div>
+              </div>
+
+              {/* Term Slider */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Durée du prêt
+                </label>
+                <input
+                  type="range"
+                  min="24"
+                  max="96"
+                  step="12"
+                  value={term}
+                  onChange={(e) => setTerm(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{term} mois</div>
+              </div>
+
+              {/* Down Payment Slider */}
+              <div>
+                <label className="block text-white/90 text-xs font-semibold mb-1.5">
+                  Mise de fonds
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max={Math.floor(price * 0.5)}
+                  step="500"
+                  value={downPayment}
+                  onChange={(e) => setDownPayment(Number(e.target.value))}
+                  className="w-full h-2 bg-white/20 rounded-lg accent-white touch-manipulation"
+                />
+                <div className="text-white text-center font-bold mt-1">{formatCurrency(downPayment)}</div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                id="save-btn"
+                onClick={handleSave}
+                className="flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Bookmark className="w-4 h-4" />
+                Sauvegarder
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-sm transition-all touch-manipulation active:scale-95 min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Column - Inputs */}
       <div className="lg:col-span-5 space-y-6 order-2 lg:order-none">
         <div className="bg-white rounded-2xl shadow-lg border border-blue-200 p-8">
           <h2 className="text-2xl font-bold text-blue-900 mb-6 flex items-center gap-2">
-            <span className="text-3xl">🚗</span>
+            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
             Détails du véhicule
           </h2>
 
@@ -161,8 +359,11 @@ export default function AutoLoanClient() {
             </div>
             {isLongTerm && (
               <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-xs text-red-700 font-semibold">
-                  ⚠️ Attention : Financement long terme ({term} mois)
+                <p className="text-xs text-red-700 font-semibold flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Attention : Financement long terme ({term} mois)
                 </p>
               </div>
             )}
@@ -176,7 +377,11 @@ export default function AutoLoanClient() {
           {/* Hero Payment Card */}
           <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 lg:p-10 text-white">
             <div className="text-center mb-6">
-              <div className="text-5xl mb-3">💳</div>
+              <div className="w-16 h-16 mx-auto mb-3 bg-white/20 rounded-2xl flex items-center justify-center">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
               <h2 className="text-lg font-medium opacity-90 mb-2">
                 Paiement bi-hebdomadaire
               </h2>
@@ -201,8 +406,11 @@ export default function AutoLoanClient() {
             {/* Interest Warning Badge */}
             {isLongTerm && (
               <div className="mt-6 bg-red-500 rounded-xl p-4 text-center">
-                <p className="font-bold text-sm">
-                  ⚠️ Financement long terme !
+                <p className="font-bold text-sm flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Financement long terme !
                 </p>
                 <p className="text-xs mt-1 opacity-90">
                   Vous paierez {formatCurrency(totalInterest)} en intérêts
@@ -286,7 +494,9 @@ export default function AutoLoanClient() {
           {/* Bi-Weekly Advantage */}
           <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl border-2 border-emerald-200 p-6">
             <h4 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
-              <span className="text-2xl">💰</span>
+              <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               Avantage des paiements bi-hebdomadaires
             </h4>
             <p className="text-sm text-emerald-800 mb-3">
@@ -340,5 +550,28 @@ export default function AutoLoanClient() {
         </div>
       </div>
     </div>
+
+    {/* Sticky Bottom Ad - Mobile Only */}
+    {showStickyAd && (
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
+        <div className="relative">
+          <button
+            onClick={() => setShowStickyAd(false)}
+            className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
+            aria-label="Fermer la publicité"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <div className="p-4 pb-6">
+            <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
+            <AdSenseAd 
+              adSlot="7290777867"
+              adFormat="auto"
+            />
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }

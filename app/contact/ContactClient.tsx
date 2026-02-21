@@ -71,7 +71,6 @@ export default function ContactClient() {
       }, 100)
       
     } catch (error) {
-      console.error('Error:', error)
       setIsSubmitting(false)
       setShowSuccess(false)
       setShowError(true)
@@ -141,12 +140,12 @@ export default function ContactClient() {
             className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl transition-all outline-none bg-white cursor-pointer focus:border-blue-500 focus:shadow-lg"
           >
             <option value="">Sélectionnez une option</option>
-            <option value="bug">🐛 Signaler un bug</option>
-            <option value="suggestion">💡 Suggérer une amélioration</option>
-            <option value="question">❓ Question générale</option>
-            <option value="partnership">🤝 Partenariat</option>
-            <option value="privacy">🔒 Question sur la confidentialité</option>
-            <option value="other">📝 Autre</option>
+            <option value="bug">Signaler un bug</option>
+            <option value="suggestion">Suggérer une amélioration</option>
+            <option value="question">Question générale</option>
+            <option value="partnership">Partenariat</option>
+            <option value="privacy">Question sur la confidentialité</option>
+            <option value="other">Autre</option>
           </select>
         </div>
 
@@ -162,13 +161,13 @@ export default function ContactClient() {
               className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl transition-all outline-none bg-white cursor-pointer focus:border-blue-500 focus:shadow-lg"
             >
               <option value="">Sélectionnez un calculateur</option>
-              <option value="salaire">💰 Salaire Net Québec</option>
-              <option value="hypotheque">🏠 Calculateur Hypothécaire</option>
-              <option value="garde">👶 Frais de Garde</option>
-              <option value="auto">🚗 Prêt Auto</option>
-              <option value="loyer">📈 Augmentation Loyer</option>
-              <option value="allocations">👨‍👩‍👧 Allocations Familiales</option>
-              <option value="autre">📝 Autre</option>
+              <option value="salaire">Salaire Net Québec</option>
+              <option value="hypotheque">Calculateur Hypothécaire</option>
+              <option value="garde">Frais de Garde</option>
+              <option value="auto">Prêt Auto</option>
+              <option value="loyer">Augmentation Loyer</option>
+              <option value="allocations">Allocations Familiales</option>
+              <option value="autre">Autre</option>
             </select>
           </div>
         )}

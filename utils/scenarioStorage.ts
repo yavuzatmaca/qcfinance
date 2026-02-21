@@ -30,7 +30,6 @@ export function getSavedScenarios(): SavedScenario[] {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error('Failed to load scenarios:', error);
     return [];
   }
 }
@@ -53,7 +52,7 @@ export function saveScenario(scenario: Omit<SavedScenario, 'id' | 'createdAt'>):
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedScenarios));
   } catch (error) {
-    console.error('Failed to save scenario:', error);
+    // Silent fail
   }
   
   return newScenario;
@@ -69,7 +68,7 @@ export function deleteScenario(id: string): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
   } catch (error) {
-    console.error('Failed to delete scenario:', error);
+    // Silent fail
   }
 }
 
@@ -80,7 +79,7 @@ export function clearAllScenarios(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.error('Failed to clear scenarios:', error);
+    // Silent fail
   }
 }
 

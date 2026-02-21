@@ -6,9 +6,11 @@ import PurchasePowerCard from '@/components/ui/PurchasePowerCard'
 import PaychequePreview from '@/components/ui/PaychequePreview'
 import DataSource from '@/components/ui/DataSource'
 import SalaryLinkGrid from '@/components/calculators/SalaryLinkGrid'
+import SalaryStatsSwiper from '@/components/SalaryStatsSwiper'
 import { calculateTaxes } from '@/utils/taxLogic'
 import DarkPageHeader from '@/components/DarkPageHeader'
 import { Sparkles } from 'lucide-react'
+import AdSenseAd from '@/components/AdSenseAd'
 
 // Generate static paths for 341 salary pages (30k to 200k in 500$ increments)
 // This creates more SEO entry points for long-tail salary searches
@@ -169,10 +171,42 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
           <div className="lg:col-span-8 space-y-6">
             <LuxurySalaryCalculator initialIncome={salaryNum} />
 
+            {/* Ad Placement 1 - After Calculator (Desktop + Mobile) */}
+            <div className="flex justify-center py-6 md:py-8">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
+
+            {/* Votre Pouvoir d'Achat - NO SWIPE (Normal Grid) */}
             <PurchasePowerCard 
               netIncome={taxResults.netIncome}
               grossIncome={salaryNum}
             />
+
+            {/* Objectif d'Épargne - Separate Section */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-6 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 bg-amber-500 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Objectif d'Épargne</h4>
+                  <p className="text-sm text-slate-700 mb-3">
+                    Visez à épargner <span className="font-bold text-amber-700">{Math.round((taxResults.netIncome / 12) * 0.20).toLocaleString('fr-CA')} $/mois</span> (20% de votre revenu net) 
+                    pour bâtir un fonds d'urgence et investir pour l'avenir.
+                  </p>
+                  <div className="text-xs text-slate-600 flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Automatisez vos épargnes dès la réception de votre paie
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div className="prose prose-slate max-w-none bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
@@ -184,20 +218,36 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
                 gagné sera imposé à ce taux.
               </p>
             </div>
+            
+            {/* Ad Placement 2 - After Educational Content (Mobile Only) */}
+            <div className="lg:hidden flex justify-center py-6">
+              <div className="max-w-3xl w-full">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
           </div>
 
           <div className="lg:col-span-4">
-            <PaychequePreview
-              grossIncome={salaryNum}
-              netIncome={taxResults.netIncome}
-              federalTax={taxResults.federalTax}
-              provincialTax={taxResults.provincialTax}
-              qpp={taxResults.qpp}
-              qpip={taxResults.qpip}
-              ei={taxResults.ei}
-              marginalRate={marginalRate}
-              effectiveRate={effectiveRate}
-            />
+            <div className="sticky top-8 space-y-6">
+              <PaychequePreview
+                grossIncome={salaryNum}
+                netIncome={taxResults.netIncome}
+                federalTax={taxResults.federalTax}
+                provincialTax={taxResults.provincialTax}
+                qpp={taxResults.qpp}
+                qpip={taxResults.qpip}
+                ei={taxResults.ei}
+                marginalRate={marginalRate}
+                effectiveRate={effectiveRate}
+              />
+              
+              {/* Ad Placement 3 - Sidebar (Desktop Only) */}
+              <div className="hidden lg:flex justify-center">
+                <div className="w-full">
+                  <AdSenseAd adSlot="7290777867" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -208,13 +258,29 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
         </div>
       </div>
 
+      {/* Vos indicateurs clés - Swipeable on Mobile */}
       <div className="bg-slate-50 py-6 border-y border-slate-100">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl font-bold text-slate-900 mb-4 text-center">
             Vos indicateurs clés
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Mobile: Swipeable Cards */}
+          <div className="lg:hidden">
+            <div className="flex items-center justify-end mb-3">
+              <span className="text-xs text-slate-500">Swipe →</span>
+            </div>
+            <SalaryStatsSwiper
+              netIncome={taxResults.netIncome}
+              totalDeductions={taxResults.totalDeductions}
+              grossIncome={salaryNum}
+              marginalRate={marginalRate}
+              effectiveRate={effectiveRate}
+            />
+          </div>
+
+          {/* Desktop: Grid */}
+          <div className="hidden lg:grid lg:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div className="p-2 bg-red-50 rounded-lg">
@@ -271,6 +337,15 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
                 Dans votre poche
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AdSense - Après indicateurs clés (Desktop + Mobile) */}
+      <div className="bg-slate-50 py-6 md:py-8">
+        <div className="max-w-6xl mx-auto px-4 flex justify-center">
+          <div className="w-full max-w-3xl">
+            <AdSenseAd adSlot="7290777867" />
           </div>
         </div>
       </div>
@@ -352,11 +427,25 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
               </p>
             </div>
 
+            {/* AdSense - Avant FAQ (Mobile Only) */}
+            <div className="lg:hidden my-6 md:my-8 flex justify-center">
+              <div className="w-full max-w-3xl">
+                <AdSenseAd adSlot="7290777867" />
+              </div>
+            </div>
+
             {/* FAQ Section - Schema Markup Ready */}
             <div className="mt-8 pt-6 border-t border-slate-200">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
                 Questions fréquentes sur {formattedAmount} $
               </h2>
+              
+              {/* Ad Placement 6 - Middle of FAQ (Mobile Only) */}
+              <div className="lg:hidden my-6 flex justify-center">
+                <div className="w-full max-w-3xl">
+                  <AdSenseAd adSlot="7290777867" />
+                </div>
+              </div>
               
               <div className="space-y-4">
                 {/* FAQ 1 */}

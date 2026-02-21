@@ -86,7 +86,9 @@ export default function ContactPage() {
                 </div>
                 <div className="pt-4 border-t-2 border-gray-100">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-2xl">⏱️</span>
+                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     <span className="text-gray-700">Réponse sous <strong className="text-blue-600">24-48h</strong></span>
                   </div>
                 </div>
@@ -107,7 +109,7 @@ export default function ContactPage() {
               <div className="space-y-3">
                 <div>
                   <p className="text-sm font-semibold text-gray-900 mb-1">QCFinance.ca</p>
-                  <p className="text-sm text-gray-700">1234 Rue De La Mont Montreal, Québec, Canada K4J1F4</p>
+                  <p className="text-sm text-gray-700">Québec/Canada</p>
                 </div>
                 <p className="text-xs text-gray-600 leading-relaxed pt-3 border-t border-gray-200">
                   Fièrement exploité depuis le Québec, pour les Québécois. Tous nos calculateurs sont adaptés aux réalités fiscales et financières du Québec.
@@ -137,7 +139,9 @@ export default function ContactPage() {
             {/* Important Notice */}
             <div className="glass-effect rounded-2xl luxury-shadow p-6 border-l-4 border-amber-500">
               <div className="flex items-start gap-3">
-                <span className="text-3xl">⚠️</span>
+                <svg className="w-8 h-8 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
                 <div>
                   <h3 className="font-bold text-gray-900 mb-2">Important à Noter</h3>
                   <div className="space-y-2 text-xs text-gray-700 leading-relaxed">

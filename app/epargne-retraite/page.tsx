@@ -3,6 +3,7 @@ import RetirementClient from './RetirementClient'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import AdSenseAd from '@/components/AdSenseAd'
 
 export const metadata: Metadata = {
   title: 'Calculateur Épargne Retraite Québec 2026 - REER et Intérêts Composés',
@@ -49,6 +50,13 @@ export default function RetirementPage() {
 
         <div className="mb-16">
           <RetirementClient />
+        </div>
+
+        {/* Ad Placement 1 - After Calculator */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
         </div>
 
         {/* Smart Cross-Link */}
@@ -106,6 +114,13 @@ export default function RetirementPage() {
             </p>
           </div>
         </section>
+
+        {/* Ad Placement 2 - After REER vs CELI Section */}
+        <div className="flex justify-center py-6 md:py-8">
+          <div className="max-w-3xl w-full">
+            <AdSenseAd adSlot="7290777867" />
+          </div>
+        </div>
 
         {/* Impact of Starting Early */}
         <section className="mt-12 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl shadow-lg border-2 border-red-200 p-8">
