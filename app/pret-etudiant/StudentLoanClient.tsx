@@ -415,7 +415,7 @@ export default function StudentLoanClient() {
         <div className="h-[100px] flex items-center justify-center">
           <AdSenseAd 
             adSlot="1234567890"
-            adFormat="horizontal"
+            adFormat="auto"
             fullWidthResponsive={true}
           />
         </div>
