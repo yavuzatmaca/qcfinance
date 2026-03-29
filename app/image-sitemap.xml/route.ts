@@ -6,11 +6,7 @@ export async function GET() {
   // All images used in the site
   const images = [
     // Logo images
-    { url: '/images/logo.png', title: 'QCFinance Logo', caption: 'Logo principal de QCFinance' },
-    { url: '/images/logo2.png', title: 'QCFinance Logo Alt', caption: 'Logo alternatif de QCFinance' },
-    { url: '/images/logo3.png', title: 'QCFinance Logo 3', caption: 'Logo QCFinance variante 3' },
-    { url: '/images/logo4.png', title: 'QCFinance Logo 4', caption: 'Logo QCFinance variante 4' },
-    { url: '/images/logo5.png', title: 'QCFinance Logo 5', caption: 'Logo QCFinance variante 5' },
+    { url: '/images/qcfinance.png', title: 'QCFinance Logo', caption: 'Logo principal de QCFinance' },
     
     // Favicon
     { url: '/images/favicon.png', title: 'QCFinance Favicon', caption: 'Icône du site QCFinance' },

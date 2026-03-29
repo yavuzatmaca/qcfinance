@@ -5,7 +5,9 @@ import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
 import { Clock } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
+
 import ComparisonMode from '@/components/ComparisonMode'
 
 export const metadata: Metadata = {
@@ -39,6 +41,16 @@ export const metadata: Metadata = {
 export default function WageConverterPage() {
   return (
     <>
+      <StructuredData
+        name="Convertisseur Taux Horaire Québec"
+        description="Convertissez instantanément votre salaire horaire en hebdomadaire, bimensuel et annuel. Calculateur gratuit pour comparer les offres d'emploi au Québec."
+        url="/taux-horaire"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.5,
+          ratingCount: 580,
+        }}
+      />
       <DarkPageHeader
         badge="Comparaison Salariale"
         badgeIcon="Clock"
@@ -55,6 +67,9 @@ export default function WageConverterPage() {
 
           <div className="mb-8 lg:mb-12">
             <WageConverterClient />
+
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
           </div>
 
           {/* Info Section - MOBILE OPTIMIZED */}
@@ -101,21 +116,10 @@ export default function WageConverterPage() {
             </div>
           </section>
 
-          {/* Native In-Feed Ad - Mobile */}
-          <div className="flex justify-center py-5 lg:hidden">
-            <div className="w-full">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" adFormat="fluid" />
-            </div>
-          </div>
+          {/* Responsive Ad 2 - After Info Section */}
+          <ResponsiveAd />
 
-          {/* Desktop Ad */}
-          <div className="hidden lg:flex justify-center py-6 lg:py-8">
-            <div className="w-full max-w-3xl">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+
 
           {/* Tips Section - MOBILE OPTIMIZED */}
           <section className="mt-8 lg:mt-12 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl shadow-lg p-6 lg:p-8">
@@ -173,21 +177,12 @@ export default function WageConverterPage() {
             </div>
           </section>
 
-          {/* Ad After Tips - Mobile */}
-          <div className="flex justify-center py-5 lg:hidden">
-            <div className="w-full">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" adFormat="fluid" />
-            </div>
-          </div>
+          {/* Responsive Ad 3 - After Tips Section */}
+          <ResponsiveAd />
 
-          {/* Ad After Tips - Desktop */}
-          <div className="hidden lg:flex justify-center py-6 lg:py-8">
-            <div className="w-full max-w-3xl">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+
+
+
 
           {/* Data Source */}
           <div className="mt-8">

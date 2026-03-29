@@ -11,7 +11,8 @@ import {
   Home,
   Users,
   Sparkles,
-  Search
+  Search,
+  BookOpen
 } from 'lucide-react'
 
 // Enhanced Type Definition
@@ -183,7 +184,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full sticky top-0 z-[100] backdrop-blur-xl bg-white/80 border-b border-gray-200/50 supports-[backdrop-filter]:bg-white/60">
+      <header className="w-full sticky top-[84px] md:top-[67px] lg:top-[97px] z-[100] backdrop-blur-xl bg-white/80 supports-[backdrop-filter]:bg-white/60">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 relative">
             {/* 1. LOGO SECTION */}
@@ -191,22 +192,23 @@ export default function Header() {
               {/* Desktop Logo */}
               <div className="hidden sm:block transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/qcfinance.png"
                   alt="QCFinance Logo"
-                  width={620}
-                  height={50}
-                  className="h-10 w-auto object-contain"
+                  width={220}
+                  height={70}
+                  className="h-16 w-auto object-contain"
                   priority
                 />
               </div>
               {/* Mobile Logo */}
               <div className="sm:hidden">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/qcfinance.png"
                   alt="QCFinance Logo"
-                  width={140}
-                  height={40}
-                  className="h-8 w-auto object-contain"
+                  width={210}
+                  height={64}
+                  className="w-auto object-contain"
+                  style={{ height: '3.625rem' }}
                   priority
                 />
               </div>
@@ -214,6 +216,16 @@ export default function Header() {
 
             {/* 2. DESKTOP NAVIGATION */}
             <div className="hidden lg:flex items-center gap-8">
+              {/* Blog Link */}
+              <Link
+                href="/blog"
+                className="flex items-center gap-2 py-2 text-sm font-semibold text-gray-700 hover:text-emerald-600 transition-colors relative group"
+              >
+                <BookOpen className="w-5 h-5" />
+                <span>Blog</span>
+                <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+
               {NAV_ITEMS.map((category, index) => (
                 <div
                   key={index}
@@ -650,6 +662,21 @@ export default function Header() {
                   </Link>
                 </div>
               </div>
+
+              {/* Blog Link - Mobile */}
+              <Link
+                href="/blog"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all"
+              >
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <span className="font-bold text-gray-900 text-sm block">Blog Finance</span>
+                  <span className="text-xs text-gray-600">Guides & Conseils</span>
+                </div>
+              </Link>
 
               {NAV_ITEMS.map((category, idx) => (
                 <div key={idx} className="space-y-2">

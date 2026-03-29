@@ -11,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
     ],
     sitemap: [
       'https://qcfinance.ca/sitemap.xml',
+      'https://qcfinance.ca/blog-sitemap.xml',
       'https://qcfinance.ca/image-sitemap.xml',
     ],
   }

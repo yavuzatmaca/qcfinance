@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { Zap, Fuel, Leaf, Award, TrendingUp, Share2, Bookmark, X } from 'lucide-react'
 import { AffiliateCard } from '@/components/AffiliateCard'
-import AdSenseAd from '@/components/AdSenseAd'
-
 // Constants
 const CO2_PER_LITER = 2.3 // kg of CO2 per liter of gas
 const TREES_PER_TON_CO2 = 50
@@ -14,7 +12,6 @@ export default function EVComparisonClient() {
   const [gasPrice, setGasPrice] = useState(1.70)
   const [gasConsumption, setGasConsumption] = useState(8.5)
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
-  const [showStickyAd, setShowStickyAd] = useState(true)
   const electricityPrice = 0.10 // QC rate fixed
   const evConsumption = 18 // kWh/100km fixed
 
@@ -512,24 +509,6 @@ export default function EVComparisonClient() {
         </div>
       </div>
     </div>
-
-      {/* STICKY BOTTOM AD - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute -top-8 right-2 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-700 transition-colors z-10 touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="min-h-[100px] flex items-center justify-center">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

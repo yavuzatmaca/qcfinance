@@ -3,15 +3,12 @@
 import { useState, useEffect } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { Share2, Bookmark, X } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
-
 type Frequency = 'hourly' | 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'annual'
 
 export default function WageConverterClient() {
   const [amount, setAmount] = useState<number>(25)
   const [frequency, setFrequency] = useState<Frequency>('hourly')
   const [hoursPerWeek, setHoursPerWeek] = useState<number>(40)
-  const [showStickyAd, setShowStickyAd] = useState(true)
   const [animateNumbers, setAnimateNumbers] = useState(false)
   const [savedCalculations, setSavedCalculations] = useState<any[]>([])
   const [activeCardIndex, setActiveCardIndex] = useState(0)
@@ -726,27 +723,6 @@ export default function WageConverterClient() {
         </div>
       </div>
 
-      {/* Sticky Bottom Ad Bar - MOBILE ONLY */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="p-4 pb-6">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd 
-                adSlot="7290777867"
-                adFormat="auto"
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Mobile: Affiliate Card at Bottom */}
       <div className="lg:hidden mt-6">

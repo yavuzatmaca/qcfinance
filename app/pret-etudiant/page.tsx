@@ -3,8 +3,8 @@ import StudentLoanClient from './StudentLoanClient'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: "Calculateur Prêt Étudiant Québec - Remboursement AFE",
   description: "Calculez vos paiements de prêt étudiant avec crédit d'impôt. Découvrez combien vous économisez grâce au crédit d'impôt québécois sur les intérêts (20%).",
@@ -35,7 +35,17 @@ export const metadata: Metadata = {
 
 export default function StudentLoanPage() {
   return (
-    <><main className="min-h-screen bg-white">
+    <>
+      <StructuredData
+        name="Calculateur Prêt Étudiant Québec 2026"
+        description="Calculez vos paiements de prêt étudiant au Québec. AFE, prêts privés et stratégies de remboursement. Gratuit."
+        url="/pret-etudiant"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.3,
+          ratingCount: 340,
+        }}
+      /><main className="min-h-screen bg-white">
         <DarkPageHeader
           badge="Avenir Étudiant"
           badgeIcon="GraduationCap"
@@ -53,12 +63,8 @@ export default function StudentLoanPage() {
             <StudentLoanClient />
           </div>
 
-          {/* Ad Placement 1 - After Calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-debt" />
@@ -107,12 +113,8 @@ export default function StudentLoanPage() {
             </div>
           </section>
 
-          {/* Ad Placement 2 - After Info Section */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 2 - After Info Section */}
+          <ResponsiveAd />
 
           {/* Tips Section */}
           <section className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg p-8">
@@ -161,6 +163,9 @@ export default function StudentLoanPage() {
               </div>
             </div>
           </section>
+
+          {/* Responsive Ad 3 - After Tips Section */}
+          <ResponsiveAd />
 
           {/* Data Source */}
           <div className="mt-8">

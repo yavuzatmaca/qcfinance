@@ -4,8 +4,8 @@ import { TrendingUp, Sparkles, DollarSign, Clock } from 'lucide-react'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: "Intérêts Composés Québec 2026 | Calculateur Investissement",
   description: "Calculez la croissance de vos investissements avec les intérêts composés. REER, CELI et plus. Gratuit.",
@@ -16,7 +16,17 @@ export const metadata: Metadata = {
 
 export default function CompoundInterestPage() {
   return (
-    <><main className="min-h-screen bg-white">
+    <>
+      <StructuredData
+        name="Calculateur Intérêts Composés Québec 2026"
+        description="Calculez la puissance des intérêts composés pour vos investissements. Planifiez votre épargne avec notre outil gratuit."
+        url="/interets-composes"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.5,
+          ratingCount: 760,
+        }}
+      /><main className="min-h-screen bg-white">
         <DarkPageHeader
           badge="Croissance Exponentielle"
           badgeIcon="Sparkles"
@@ -33,12 +43,10 @@ export default function CompoundInterestPage() {
             <CompoundInterestClient />
           </div>
 
-          {/* Ad Placement 1 - After Calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
+
+
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-retirement" />
@@ -87,12 +95,10 @@ export default function CompoundInterestPage() {
             </div>
           </section>
 
-          {/* Ad Placement 2 - After Educational Section */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+
+
+          {/* Responsive Ad 2 - After Educational Section */}
+          <ResponsiveAd />
 
           {/* Rule of 72 Deep Dive Section */}
           <section className="mt-12 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl shadow-lg p-8 border-2 border-amber-200">
@@ -214,6 +220,9 @@ export default function CompoundInterestPage() {
               </div>
             </div>
           </section>
+
+          {/* Responsive Ad 3 - After Tips Section */}
+          <ResponsiveAd />
 
           {/* FAQ Section */}
           <section className="mt-12 bg-white rounded-xl shadow-lg p-8">

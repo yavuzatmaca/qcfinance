@@ -5,8 +5,7 @@ import StructuredData from '@/components/StructuredData'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: 'Taxe de Bienvenue Québec 2026 | Calculateur Gratuit',
   description: 'Calculez les droits de mutation pour votre achat immobilier. Taux officiels 2026. Gratuit.',
@@ -67,12 +66,8 @@ export default function TransferTaxPage() {
           <TransferTaxCalculator />
         </div>
 
-        {/* AdSense - Après calculator */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="w-full max-w-3xl">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 1 - After Calculator */}
+        <ResponsiveAd />
 
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-mortgage" />
@@ -120,12 +115,8 @@ export default function TransferTaxPage() {
           </div>
         </section>
 
-        {/* AdSense - Après section éducative */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="w-full max-w-3xl">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 2 - After Educational Section */}
+        <ResponsiveAd />
 
         {/* Pro Tips Section - V2 Gold Standard */}
         <section className="mt-12 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-8">
@@ -178,6 +169,9 @@ export default function TransferTaxPage() {
             </div>
           </div>
         </section>
+
+        {/* Responsive Ad 3 - After Pro Tips Section */}
+        <ResponsiveAd />
 
         {/* Data Source */}
         <div className="mt-8">

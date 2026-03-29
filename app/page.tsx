@@ -10,7 +10,7 @@ export default async function Home() {
     "@type": "Organization",
     "name": "QCFinance.ca",
     "url": "https://qcfinance.ca",
-    "logo": "https://qcfinance.ca/images/logo.png",
+    "logo": "https://qcfinance.ca/images/qcfinance.png",
     "description": "Calculateurs financiers gratuits spécialisés pour le Québec. Salaire net, hypothèque, impôts, et plus.",
     "areaServed": "QC",
     "sameAs": [

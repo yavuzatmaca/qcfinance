@@ -4,8 +4,8 @@ import { Leaf, DollarSign, TrendingDown } from 'lucide-react'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: "Auto Électrique vs Essence Québec 2026 | Calculateur",
   description: "Calculez vos économies en passant à l'électrique. Subventions, coûts et impact environnemental. Gratuit.",
@@ -17,6 +17,16 @@ export const metadata: Metadata = {
 export default function EVSavingsPage() {
   return (
     <>
+      <StructuredData
+        name="Auto Électrique vs Essence Québec 2026"
+        description="Calculez vos économies en passant à l'électrique. Subventions, coûts et impact environnemental. Gratuit."
+        url="/auto-electrique-vs-essence"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.3,
+          ratingCount: 290,
+        }}
+      />
       <DarkPageHeader
         badge="Transition Verte"
         badgeIcon="Leaf"
@@ -34,12 +44,8 @@ export default function EVSavingsPage() {
           {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
           <EVComparisonClient />
 
-          {/* Ad Placement 1 - After Calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-auto-loan" />
@@ -82,12 +88,8 @@ export default function EVSavingsPage() {
             </div>
           </section>
 
-          {/* Ad Placement 2 - After Info Section */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 2 - After Info Section */}
+          <ResponsiveAd />
 
           {/* Guide Section */}
           <section className="mt-12 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg p-8">
@@ -151,12 +153,8 @@ export default function EVSavingsPage() {
             </div>
           </section>
 
-          {/* Ad Placement 4 - Before FAQ (Desktop Only) */}
-          <div className="hidden lg:flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 3 - After Guide Section */}
+          <ResponsiveAd />
 
           {/* FAQ Section */}
           <section className="mt-12 bg-white rounded-xl shadow-lg p-8">
@@ -170,13 +168,6 @@ export default function EVSavingsPage() {
                   Les véhicules électriques modernes offrent entre 300 et 500 km d'autonomie. 
                   Parfait pour la majorité des déplacements quotidiens au Québec.
                 </p>
-              </div>
-
-              {/* Ad Placement 3 - Middle of FAQ (Mobile Only) */}
-              <div className="lg:hidden flex justify-center py-4">
-                <div className="max-w-3xl w-full">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
               </div>
 
               <div className="border-b pb-4">

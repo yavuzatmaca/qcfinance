@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import ContactClient from './ContactClient'
+import ResponsiveAd from '@/components/ResponsiveAd'
 
 export const metadata: Metadata = {
   title: "Contact - Nous Joindre | QCFinance.ca",
@@ -159,6 +160,11 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Responsive Ad - After Contact Form */}
+        <div className="mt-12">
+          <ResponsiveAd adSlot="6737944215" label="Publicité" />
         </div>
 
         {/* Comment Pouvons-Nous Vous Aider? */}

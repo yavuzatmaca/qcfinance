@@ -3,8 +3,8 @@ import RetirementClient from './RetirementClient'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: 'Calculateur Épargne Retraite Québec 2026 - REER et Intérêts Composés',
   description: 'Calculez votre épargne-retraite avec les intérêts composés. Planifiez votre REER, CELI et découvrez combien vous accumulerez pour la retraite. Gratuit.',
@@ -35,7 +35,17 @@ export const metadata: Metadata = {
 
 export default function RetirementPage() {
   return (
-    <><main className="min-h-screen bg-white">
+    <>
+      <StructuredData
+        name="Calculateur Épargne Retraite Québec 2026"
+        description="Calculez votre épargne retraite avec REER, CELI et RRQ. Planifiez votre retraite au Québec avec nos outils gratuits."
+        url="/epargne-retraite"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.4,
+          ratingCount: 650,
+        }}
+      /><main className="min-h-screen bg-white">
         <DarkPageHeader
           badge="Liberté Financière"
           badgeIcon="Palmtree"
@@ -52,12 +62,10 @@ export default function RetirementPage() {
           <RetirementClient />
         </div>
 
-        {/* Ad Placement 1 - After Calculator */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 1 - After Calculator */}
+        <ResponsiveAd />
+
+
 
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-salary" />
@@ -115,12 +123,10 @@ export default function RetirementPage() {
           </div>
         </section>
 
-        {/* Ad Placement 2 - After REER vs CELI Section */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+
+
+        {/* Responsive Ad 2 - After REER vs CELI Section */}
+        <ResponsiveAd />
 
         {/* Impact of Starting Early */}
         <section className="mt-12 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl shadow-lg border-2 border-red-200 p-8">
@@ -227,6 +233,9 @@ export default function RetirementPage() {
             </div>
           </div>
         </section>
+
+        {/* Responsive Ad 3 - After Tips Section */}
+        <ResponsiveAd />
 
         {/* Data Source */}
         <div className="mt-8">

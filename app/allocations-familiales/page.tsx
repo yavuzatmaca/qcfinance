@@ -4,8 +4,8 @@ import StructuredData from '@/components/StructuredData'
 import SEOContent from '@/components/SEOContent'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
 import { Users } from 'lucide-react'
+import ResponsiveAd from '@/components/ResponsiveAd'
 
 export const metadata: Metadata = {
   title: "Allocations Familiales Québec 2026 | Calculateur ACE",
@@ -64,12 +64,10 @@ export default function FamilyBenefitsPage() {
           {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
           <FamilyBenefitsClient />
 
-          {/* Ad Placement 1 - After Calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
+
+
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-salary" />
@@ -118,12 +116,10 @@ export default function FamilyBenefitsPage() {
             </div>
           </section>
 
-          {/* Ad Placement 2 - After Info Section */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+
+
+          {/* Responsive Ad 2 - After Info Section */}
+          <ResponsiveAd />
 
           {/* Guide Section */}
           <section className="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl shadow-lg p-8">
@@ -216,12 +212,7 @@ export default function FamilyBenefitsPage() {
                 </div>
               </div>
 
-              {/* Ad Placement 3 - Middle of Tips (Mobile Only) */}
-              <div className="lg:hidden flex justify-center py-4">
-                <div className="max-w-3xl w-full">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
-              </div>
+
 
               <div className="flex gap-4 items-start">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -249,12 +240,10 @@ export default function FamilyBenefitsPage() {
             </div>
           </section>
 
-          {/* Ad Placement 4 - Before FAQ (Desktop Only) */}
-          <div className="hidden lg:flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+
+
+          {/* Responsive Ad 3 - After Tips Section */}
+          <ResponsiveAd />
 
           {/* SEO Content Section */}
           <SEOContent

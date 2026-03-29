@@ -1,8 +1,7 @@
 import WizardSimulatorV2 from '@/src/components/v2/WizardSimulatorV2';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import AdSenseAd from '@/components/AdSenseAd';
-
+import ResponsiveAd from '@/components/ResponsiveAd';
 export const metadata: Metadata = {
   title: 'Simulateur de Vie au Québec 2026 - Calculateur Salaire Net, Loyer & Budget | QCFinance.ca',
   description: 'Calculez votre budget au Québec en 2026 : salaire net après impôts, loyer, épicerie, allocations familiales. Simulateur gratuit pour Montréal, Québec, Laval. Résultats personnalisés en temps réel!',
@@ -354,12 +353,8 @@ export default function SimulateurVieQuebecV2Page() {
             </div>
           </div>
           
-          {/* Ad Placement - After SEO Content (Engaged Readers) */}
-          <div className="flex justify-center py-8 md:py-12">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad - After SEO Content */}
+          <ResponsiveAd />
 
           <div className="mt-12 p-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
             <h3 className="text-2xl font-bold mb-4">

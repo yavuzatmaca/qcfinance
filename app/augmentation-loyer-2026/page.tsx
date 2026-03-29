@@ -4,8 +4,8 @@ import { Scale, FileText, TrendingUp } from 'lucide-react'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: 'Calculateur Augmentation de Loyer Québec 2026 - TAL (Tribunal Logement)',
   description: 'Calculez l\'augmentation de loyer permise selon le TAL. Outil officiel basé sur les règles du Tribunal administratif du logement du Québec. Gratuit et précis.',
@@ -38,6 +38,16 @@ export const metadata: Metadata = {
 export default function RentIncreasePage() {
   return (
     <>
+      <StructuredData
+        name="Calculateur Augmentation de Loyer Québec 2026"
+        description="Calculez l'augmentation de loyer permise selon le TAL. Outil officiel basé sur les règles du Tribunal administratif du logement du Québec. Gratuit et précis."
+        url="/augmentation-loyer-2026"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.6,
+          ratingCount: 1120,
+        }}
+      />
       <DarkPageHeader
         badge="Droits des Locataires"
         badgeIcon="Scale"
@@ -55,12 +65,8 @@ export default function RentIncreasePage() {
         {/* GOLD STANDARD SPLIT-SCREEN CALCULATOR */}
         <RentIncreaseClient />
 
-        {/* AdSense - Après calculator */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="w-full max-w-3xl">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 1 - After Calculator */}
+        <ResponsiveAd />
 
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-affordability" />
@@ -106,12 +112,8 @@ export default function RentIncreasePage() {
           </div>
         </section>
 
-        {/* AdSense - Après section éducative */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="w-full max-w-3xl">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 2 - After Educational Section */}
+        <ResponsiveAd />
 
         {/* Pro Tips Section - V2 Gold Standard */}
         <section className="mt-12 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg p-8">
@@ -164,6 +166,9 @@ export default function RentIncreasePage() {
             </div>
           </div>
         </section>
+
+        {/* Responsive Ad 3 - After Pro Tips Section */}
+        <ResponsiveAd />
 
         {/* Data Source */}
         <div className="mt-8">

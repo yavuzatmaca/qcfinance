@@ -5,9 +5,8 @@ import SEOContent from '@/components/SEOContent'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
+import ResponsiveAd from '@/components/ResponsiveAd'
 import { Home as HomeIcon } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
-
 export const metadata: Metadata = {
   title: "Louer ou Acheter Québec 2026 | Comparateur Gratuit",
   description: "Comparez achat vs location sur 5 ans. Analyse financière complète incluant tous les coûts. Gratuit.",
@@ -70,12 +69,8 @@ export default function RentVsBuyPage() {
             <RentVsBuyClient />
           </div>
 
-          {/* AdSense - Après calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="w-full max-w-3xl">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="mortgage-to-affordability" />
@@ -124,12 +119,8 @@ export default function RentVsBuyPage() {
             </div>
           </section>
 
-          {/* AdSense - Après section info */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="w-full max-w-3xl">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 2 - After Info Section */}
+          <ResponsiveAd />
 
           {/* Assumptions Section */}
           <section className="mt-12 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl shadow-lg p-8">
@@ -311,12 +302,8 @@ export default function RentVsBuyPage() {
             </div>
           </section>
 
-          {/* AdSense - Après autres facteurs */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="w-full max-w-3xl">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 3 - After Factors Section */}
+          <ResponsiveAd />
 
           {/* Tips Section */}
           <section className="mt-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl shadow-lg p-8">
@@ -350,13 +337,6 @@ export default function RentVsBuyPage() {
                 </div>
               </div>
 
-              {/* Ad Placement 4 - Middle of Tips (Mobile Only) */}
-              <div className="lg:hidden flex justify-center py-4">
-                <div className="max-w-3xl w-full">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
-              </div>
-
               <div className="flex gap-4 items-start bg-white rounded-lg p-4">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                   <span className="text-blue-600 font-bold">3</span>
@@ -384,13 +364,6 @@ export default function RentVsBuyPage() {
               </div>
             </div>
           </section>
-
-          {/* Ad Placement 5 - Before FAQ (Desktop Only) */}
-          <div className="hidden lg:flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
         </div>
 
         {/* Data Source */}

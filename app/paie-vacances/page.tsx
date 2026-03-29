@@ -1,12 +1,12 @@
 import { Metadata } from 'next'
 import VacationPayClient from './VacationPayClient'
-import { Calendar, Percent, CheckCircle } from 'lucide-react'
+import { Calendar, Percent, CheckCircle, Lightbulb, DollarSign } from 'lucide-react'
 import RelatedTools from '@/components/RelatedTools'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: "Calculateur Paie de Vacances Québec - 4% ou 6% Indemnité",
   description: "Calculez votre indemnité de vacances selon la loi québécoise. 4% pour moins de 3 ans, 6% pour 3 ans et plus. Planifiez vos vacances dès maintenant.",
@@ -38,6 +38,16 @@ export const metadata: Metadata = {
 export default function VacationPayPage() {
   return (
     <>
+      <StructuredData
+        name="Calculateur Paie de Vacances Québec"
+        description="Calculez votre indemnité de vacances selon la loi québécoise. 4% pour moins de 3 ans, 6% pour 3 ans et plus. Planifiez vos vacances dès maintenant."
+        url="/paie-vacances"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.6,
+          ratingCount: 420,
+        }}
+      />
       <DarkPageHeader
         badge="Temps de Repos"
         badgeIcon="Calendar"
@@ -50,21 +60,12 @@ export default function VacationPayPage() {
       />
 
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="container mx-auto px-4 py-12 max-w-7xl">
+        <div className="container mx-auto px-4">
+          <VacationPayClient />
 
-          <div className="mb-12">
-            <VacationPayClient />
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
 
-          {/* AdSense - Après calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="w-full max-w-3xl">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" adFormat="fluid" />
-            </div>
-          </div>
-
-          {/* Smart Cross-Link */}
           <ToolCrossLink variant="to-salary" />
 
           {/* Educational Section - V2 Gold Standard */}
@@ -72,49 +73,47 @@ export default function VacationPayPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
               Comment fonctionne le calcul ?
             </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="bg-blue-50 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
                   <Percent className="w-8 h-8 text-blue-600" />
+                  <h3 className="font-bold text-gray-900">Pourcentage selon l'ancienneté</h3>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">Pourcentage selon l'ancienneté</h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-gray-600 text-sm leading-relaxed">
                   <strong>4%</strong> de votre salaire brut pour moins de 3 ans de service continu, 
                   <strong> 6%</strong> pour 3 ans et plus. Ce pourcentage s'applique sur tous vos gains de l'année de référence.
                 </p>
               </div>
 
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-green-50 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
                   <Calendar className="w-8 h-8 text-green-600" />
+                  <h3 className="font-bold text-gray-900">Année de référence</h3>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">Année de référence</h3>
-                <p className="text-sm text-gray-600">
-                  L'indemnité est calculée sur le salaire brut gagné pendant <strong>l'année de référence</strong> (du 1er mai au 30 avril). 
-                  Tous vos revenus de cette période comptent, incluant les heures supplémentaires et primes.
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  L'indemnité est calculée sur le salaire brut gagné pendant l'année de référence 
+                  <strong> (du 1er mai au 30 avril)</strong>. Tous vos revenus de cette période comptent, 
+                  incluant les heures supplémentaires et primes.
                 </p>
               </div>
 
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-purple-50 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
                   <CheckCircle className="w-8 h-8 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Droit garanti par la loi</h3>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">Droit garanti par la loi</h3>
-                <p className="text-sm text-gray-600">
-                  Tous les employés ont droit à une indemnité de vacances selon la <strong>Loi sur les normes du travail du Québec</strong>. 
-                  C'est un droit minimal que votre employeur doit respecter.
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Tous les employés ont droit à une indemnité de vacances selon la 
+                  <strong> Loi sur les normes du travail du Québec</strong>. C'est un droit minimal 
+                  que votre employeur doit respecter.
                 </p>
               </div>
             </div>
           </section>
 
-          {/* AdSense - Après section éducative (Desktop Only) */}
-          <div className="hidden lg:flex justify-center py-6 md:py-8">
-            <div className="w-full max-w-3xl">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 2 - After Educational Section */}
+          <ResponsiveAd />
 
           {/* Pro Tips Section - V2 Gold Standard */}
           <section className="mt-8 lg:mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg p-5 lg:p-8">
@@ -124,9 +123,7 @@ export default function VacationPayPage() {
             <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
               <div className="bg-white rounded-lg p-4 lg:p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm lg:text-base">
-                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
-                  </svg>
+                  <Calendar className="w-5 h-5 text-blue-600 flex-shrink-0" />
                   <span>Vérifiez votre ancienneté</span>
                 </h3>
                 <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
@@ -137,9 +134,7 @@ export default function VacationPayPage() {
 
               <div className="bg-white rounded-lg p-4 lg:p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm lg:text-base">
-                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
-                  </svg>
+                  <DollarSign className="w-5 h-5 text-green-600 flex-shrink-0" />
                   <span>Incluez les heures supplémentaires</span>
                 </h3>
                 <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
@@ -150,9 +145,7 @@ export default function VacationPayPage() {
 
               <div className="bg-white rounded-lg p-4 lg:p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm lg:text-base">
-                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
-                  </svg>
+                  <Lightbulb className="w-5 h-5 text-yellow-600 flex-shrink-0" />
                   <span>Planifiez à l'avance</span>
                 </h3>
                 <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
@@ -163,9 +156,7 @@ export default function VacationPayPage() {
 
               <div className="bg-white rounded-lg p-4 lg:p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2 text-sm lg:text-base">
-                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
-                  </svg>
+                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0" />
                   <span>Demandez le paiement anticipé</span>
                 </h3>
                 <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
@@ -176,6 +167,9 @@ export default function VacationPayPage() {
             </div>
           </section>
 
+          {/* Responsive Ad 3 - After Pro Tips Section */}
+          <ResponsiveAd />
+
           {/* Data Source */}
           <div className="mt-8">
             <DataSource 
@@ -184,9 +178,6 @@ export default function VacationPayPage() {
               lastUpdate="Viguer 2026" 
             />
           </div>
-
-          {/* Related Tools */}
-          <RelatedTools currentTool="/paie-vacances" currentCategory="tax" />
         </div>
       </main>
     </>

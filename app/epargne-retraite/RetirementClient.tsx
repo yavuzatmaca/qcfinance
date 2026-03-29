@@ -3,15 +3,12 @@
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { X, Share2, Bookmark } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
-
 export default function RetirementClient() {
   const [currentAge, setCurrentAge] = useState<number>(30)
   const [retirementAge, setRetirementAge] = useState<number>(65)
   const [currentSavings, setCurrentSavings] = useState<number>(10000)
   const [monthlyContribution, setMonthlyContribution] = useState<number>(500)
   const [returnRate, setReturnRate] = useState<number>(6.0)
-  const [showStickyAd, setShowStickyAd] = useState(true)
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   // Calculate years to grow
@@ -463,25 +460,6 @@ export default function RetirementClient() {
       </div>
     </div>
 
-    {/* Sticky Bottom Ad - Mobile Only */}
-    {showStickyAd && (
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl lg:hidden">
-        <button
-          onClick={() => setShowStickyAd(false)}
-          className="absolute -top-8 right-2 w-8 h-8 bg-slate-800 hover:bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg touch-manipulation active:scale-95 transition-all"
-          aria-label="Fermer la publicité"
-        >
-          <X className="w-4 h-4" />
-        </button>
-        <div className="h-[100px] flex items-center justify-center">
-          <AdSenseAd 
-            adSlot="1234567890"
-            adFormat="auto"
-            fullWidthResponsive={true}
-          />
-        </div>
-      </div>
-    )}
   </>
   )
 }

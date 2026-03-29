@@ -6,11 +6,10 @@ import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import GlobalWrapper from '@/components/GlobalWrapper'
-import OrganizationSchema from '@/components/OrganizationSchema'
+import ConditionalOrganizationSchema from '@/components/ConditionalOrganizationSchema'
 import AnnouncementBar from '@/components/ui/AnnouncementBar'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
 import ConditionalLayout from '@/components/ConditionalLayout'
-import IntroPopup from '@/components/IntroPopup'
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
@@ -110,12 +109,13 @@ export default function RootLayout({
       <head>
         <meta name="google-adsense-account" content="ca-pub-2733523563879283" />
         
-        {/* Google AdSense - Manuel Ads Only */}
-        <script 
-          async 
+        {/* Google AdSense Script */}
+        <script
+          async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2733523563879283"
           crossOrigin="anonymous"
-        />
+        ></script>
+
         
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
         <meta name="theme-color" content="#10b981" />
@@ -130,20 +130,20 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <style dangerouslySetInnerHTML={{__html: `
           *,*::before,*::after{box-sizing:border-box}
           body{margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
           .hero-gradient{background:linear-gradient(to bottom,rgb(236 253 245 / 0.5),transparent)}
           img{max-width:100%;height:auto}
           button,input,select,textarea{font:inherit;min-height:44px;min-width:44px}
+          @keyframes slide-down{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+          .animate-slide-down{animation:slide-down 0.3s ease-out}
         `}} />
-        <OrganizationSchema />
+        <ConditionalOrganizationSchema />
       </head>
       <body className={`${plusJakartaSans.className} bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-white to-white text-slate-900`}>
         <GoogleAnalytics GA_MEASUREMENT_ID="G-4E6L3DHKPJ" />
         <PerformanceMonitor />
-        <IntroPopup />
         <ConditionalLayout>
           {children}
         </ConditionalLayout>

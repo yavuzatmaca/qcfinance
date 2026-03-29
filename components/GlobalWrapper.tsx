@@ -1,9 +1,7 @@
-import { getAlertConfig, siteConfig } from '@/app/site-config';
-import Script from 'next/script';
+import { getAlertConfig } from '@/app/site-config';
 
 export default async function GlobalWrapper({ children }: { children: React.ReactNode }) {
   const alert = getAlertConfig();
-  const ads = siteConfig.ads;
 
   // Alert color mapping
   const alertColors = {
@@ -20,18 +18,6 @@ export default async function GlobalWrapper({ children }: { children: React.Reac
         <div className={`${alertColors[alert.type]} text-white px-4 py-3 text-center`}>
           <p className="text-sm font-medium">{alert.message}</p>
         </div>
-      )}
-
-      {/* Google AdSense Script */}
-      {ads.isEnabled && ads.googleAdSenseId && (
-        <>
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ads.googleAdSenseId}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
-        </>
       )}
 
       {children}

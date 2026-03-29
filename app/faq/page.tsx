@@ -1,8 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { HelpCircle, ChevronDown } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: "FAQ - Questions Fréquentes | QCFinance.ca",
   description: "Trouvez des réponses aux questions fréquemment posées sur nos calculateurs financiers et outils pour le Québec.",
@@ -198,10 +197,8 @@ export default function FAQPage() {
         </div>
         
         {/* Ad Placement 1 - After First 3 Categories (High Engagement) */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
+        <div className="my-8">
+          <ResponsiveAd adSlot="6737944215" label="Publicité" />
         </div>
 
         <div className="space-y-8">
@@ -231,10 +228,8 @@ export default function FAQPage() {
           ))}
 
           {/* Ad Placement 2 - Before Contact CTA */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
+          <div className="my-8">
+            <ResponsiveAd adSlot="6737944215" label="Publicité" />
           </div>
 
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white text-center">

@@ -41,7 +41,6 @@ export default function OrganizationSchema() {
     name: 'QCFinance',
     image: 'https://qcfinance.ca/logo.png',
     url: 'https://qcfinance.ca',
-    telephone: '', // Ajoutez si disponible
     priceRange: 'Gratuit',
     address: {
       '@type': 'PostalAddress',

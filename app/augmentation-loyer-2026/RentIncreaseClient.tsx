@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { Home, Scale, AlertTriangle, CheckCircle, TrendingUp, Share2, Bookmark, X } from 'lucide-react'
 import { AffiliateCard } from '@/components/AffiliateCard'
-import AdSenseAd from '@/components/AdSenseAd'
-
 // 2026 TAL Constants (Simplified)
 const BASE_INDEX = 0.04 // 4% base inflation adjustment
 const TAX_IMPACT_RATE = 0.001 // 0.1% for every 1% tax increase
@@ -15,7 +13,6 @@ export default function RentIncreaseClient() {
   const [municipalTaxIncrease, setMunicipalTaxIncrease] = useState(2)
   const [majorRepairs, setMajorRepairs] = useState(0)
   const [proposedIncrease, setProposedIncrease] = useState(0)
-  const [showStickyAd, setShowStickyAd] = useState(true)
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   // Calculations
@@ -428,24 +425,6 @@ export default function RentIncreaseClient() {
       </div>
     </div>
 
-      {/* Sticky Bottom Ad - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
-              aria-label="Fermer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="p-4 pb-6">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" adFormat="auto" />
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

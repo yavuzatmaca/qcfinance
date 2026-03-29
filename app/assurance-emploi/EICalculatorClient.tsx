@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { Clock, DollarSign, TrendingDown, CheckCircle, AlertCircle, Share2, X, Lightbulb } from 'lucide-react'
 import { AffiliateCard } from '@/components/AffiliateCard'
-import AdSenseAd from '@/components/AdSenseAd'
-
 // 2026 EI Constants
 const MAX_INSURABLE_EARNINGS = 63200
 const EI_RATE = 0.55 // 55%
@@ -23,7 +21,6 @@ export default function EICalculatorClient() {
   const [salary, setSalary] = useState(50000)
   const [weeksWorked, setWeeksWorked] = useState(40)
   const [unemploymentRate, setUnemploymentRate] = useState(6)
-  const [showStickyAd, setShowStickyAd] = useState(true)
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
 
   // Calculations
@@ -490,24 +487,6 @@ export default function EICalculatorClient() {
         </div>
       </div>
 
-      {/* Sticky Bottom Ad - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="p-4 pb-6">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd adSlot="7290777867" adFormat="auto" />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
     </>
   )

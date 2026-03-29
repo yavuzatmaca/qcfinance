@@ -5,7 +5,8 @@ import EmptyStatePreview from '@/components/ui/EmptyStatePreview'
 import DataSource from '@/components/ui/DataSource'
 import SalaryLinkGrid from '@/components/calculators/SalaryLinkGrid'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
+import ResponsiveAd from '@/components/ResponsiveAd'
+
 import { TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -43,30 +44,6 @@ export const metadata: Metadata = {
 export default function SalaryLandingPage() {
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-emerald-100">
-      {/* JSON-LD Structured Data for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'SoftwareApplication',
-            name: 'Calculateur Salaire Net Québec 2026',
-            description: 'Calculateur gratuit pour estimer votre salaire net après impôts au Québec. Intègre tous les taux d\'imposition 2026, RRQ, RQAP, AE et déductions fédérales et provinciales.',
-            applicationCategory: 'FinanceApplication',
-            operatingSystem: 'Web',
-            offers: {
-              '@type': 'Offer',
-              price: '0',
-              priceCurrency: 'CAD'
-            },
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: '4.8',
-              ratingCount: '2450'
-            }
-          })
-        }}
-      />
 
       {/* Dark Header - Flagship Design */}
       <DarkPageHeader
@@ -80,27 +57,14 @@ export default function SalaryLandingPage() {
         showLastUpdated={true}
       />
 
-      {/* Ad Placement 1 - Top Banner (Desktop + Mobile) */}
-      <div className="container mx-auto max-w-6xl px-4 pt-8">
-        <div className="flex justify-center">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
-      </div>
-
       {/* 2. Main Content */}
       <div className="container mx-auto max-w-6xl px-4 py-12">
         <div className="grid lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-6">
             <LuxurySalaryCalculator initialIncome={0} />
             
-            {/* Ad Placement 2 - After Calculator (Desktop + Mobile) */}
-            <div className="flex justify-center py-6 md:py-8">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+            {/* Responsive Ad 1 - After Calculator */}
+            <ResponsiveAd adSlot="6737944215" label="Publicité" />
 
             {/* SEO Content Block */}
             <div className="prose prose-slate max-w-none bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
@@ -112,26 +76,18 @@ export default function SalaryLandingPage() {
                 Notre calculateur intègre tous les taux officiels 2026 pour vous donner une estimation précise et instantanée.
               </p>
             </div>
-            
-            {/* Ad Placement 3 - After Educational Content (Mobile Only) */}
-            <div className="lg:hidden flex justify-center py-6">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
           </div>
 
           {/* RIGHT: Sticky Sidebar (4 cols) - Hidden on Mobile */}
           <div className="hidden lg:block lg:col-span-4">
-            <div className="sticky top-8 space-y-6">
+            <div className="space-y-6">
               <EmptyStatePreview />
               
-              {/* Ad Placement 4 - Sidebar (Desktop Only) */}
-              <div className="flex justify-center">
-                <div className="w-full">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
+              {/* Sidebar Ad - Desktop Only */}
+              <div className="sticky top-24">
+                <ResponsiveAd adSlot="6737944215" label="Publicité" />
               </div>
+
             </div>
           </div>
         </div>
@@ -277,13 +233,6 @@ export default function SalaryLandingPage() {
                 </div>
               </div>
             </div>
-            
-            {/* Ad Placement 5 - Before FAQ (Mobile Only) */}
-            <div className="lg:hidden my-6 flex justify-center not-prose">
-              <div className="w-full max-w-3xl">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
 
             <h2 className="text-3xl font-bold text-slate-900 mb-3 mt-8">
               Taux marginal vs taux effectif
@@ -312,16 +261,16 @@ export default function SalaryLandingPage() {
       {/* FAQ Section */}
       <div className="bg-white py-6 border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-4">
+          
+
+          
+
+          {/* Responsive Ad 2 - Before FAQ */}
+          <ResponsiveAd adSlot="6737944215" label="Publicité" />
+          
           <h2 className="text-3xl font-bold text-slate-900 mb-4">
             Questions fréquentes
           </h2>
-          
-          {/* Ad Placement 6 - Middle of FAQ (Mobile Only) */}
-          <div className="lg:hidden my-6 flex justify-center">
-            <div className="w-full max-w-3xl">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
           
           <div className="space-y-4">
             {/* FAQ 1 */}
@@ -460,12 +409,10 @@ export default function SalaryLandingPage() {
         </div>
       </div>
 
-      {/* Ad Placement 7 - Footer (Desktop Only) */}
-      <div className="hidden lg:block bg-white py-8 border-t border-slate-100">
-        <div className="max-w-6xl mx-auto px-4 flex justify-center">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
+      {/* Bottom Ad - Final Placement */}
+      <div className="bg-white py-6 border-t border-slate-100">
+        <div className="max-w-6xl mx-auto px-4">
+          <ResponsiveAd adSlot="6737944215" label="Publicité" />
         </div>
       </div>
     </div>

@@ -12,13 +12,12 @@ export default function ResourceHints() {
       
       {/* DNS-prefetch for analytics and ads */}
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-      <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       
       {/* Preload critical assets */}
       <link
         rel="preload"
-        href="/images/logo2.png"
+        href="/images/qcfinance.png"
         as="image"
         type="image/png"
       />

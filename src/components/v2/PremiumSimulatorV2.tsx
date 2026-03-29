@@ -17,7 +17,6 @@ import { WizardState } from './types';
 import { useSimulatorV2, generateInsightsV2 } from '@/src/hooks/v2/useSimulatorV2';
 import SimulatorActionsV2 from '@/components/v2/SimulatorActionsV2';
 import AffiliateRecommendationsV2 from '@/components/v2/AffiliateRecommendationsV2';
-import AdSenseAd from '@/components/AdSenseAd';
 import { ResultsWithEditableExpenses } from './ResultsWithEditableExpenses';
 
 interface Props {
@@ -60,7 +59,6 @@ export default function PremiumSimulatorV2({ wizardState, setWizardState, onRese
   const insights = result ? generateInsightsV2(result) : [];
   const [showComparison, setShowComparison] = React.useState(false);
   const [refreshScenarios, setRefreshScenarios] = React.useState(0);
-  const [showStickyAd, setShowStickyAd] = React.useState(true);
   const [isQuickSummaryExpanded, setIsQuickSummaryExpanded] = React.useState(false);
   const [activeCardIndex, setActiveCardIndex] = React.useState(0);
 
@@ -483,11 +481,7 @@ export default function PremiumSimulatorV2({ wizardState, setWizardState, onRese
             />
 
             {/* Ad Placement - Sidebar Middle (Critical for Mobile Early Engagement) */}
-            <div className="flex justify-center py-6 md:py-8">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+            {/* Ad container removed - Auto Ads will handle placement */}
 
             {/* Personalized Insights - Moved from right dashboard */}
             {insights.length > 0 && (
@@ -723,11 +717,7 @@ export default function PremiumSimulatorV2({ wizardState, setWizardState, onRese
             </div>
 
             {/* Ad Placement 1 - After Top Stats (High Engagement) */}
-            <div className="flex justify-center py-6 md:py-8">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+            {/* Ad container removed - Auto Ads will handle placement */}
 
             {/* Charts Row */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -846,12 +836,50 @@ export default function PremiumSimulatorV2({ wizardState, setWizardState, onRese
               </motion.div>
             </div>
 
-            {/* Ad Placement 2 - After Charts (Natural Break) */}
-            <div className="flex justify-center py-6 md:py-8">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
+            {/* Responsive Ad - Between Expenses and Personalized Advice */}
+            <div className="my-8">
+              <div className="flex justify-center">
+                <div className="w-full max-w-2xl">
+                  {/* Ad Label */}
+                  <div className="text-[10px] text-slate-400 text-center mb-2 uppercase tracking-wide">
+                    Publicité
+                  </div>
+                  
+                  {/* Desktop Ad */}
+                  <ins
+                    className="adsbygoogle hidden lg:block"
+                    style={{ display: 'block' }}
+                    data-ad-client="ca-pub-2733523563879283"
+                    data-ad-slot="6737944215"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"
+                  />
+                  
+                  {/* Tablet Ad */}
+                  <ins
+                    className="adsbygoogle hidden md:block lg:hidden"
+                    style={{ display: 'block' }}
+                    data-ad-client="ca-pub-2733523563879283"
+                    data-ad-slot="6737944215"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"
+                  />
+                  
+                  {/* Mobile Ad */}
+                  <ins
+                    className="adsbygoogle block md:hidden"
+                    style={{ display: 'block' }}
+                    data-ad-client="ca-pub-2733523563879283"
+                    data-ad-slot="6737944215"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Ad Placement 2 - After Charts (Natural Break) */}
+            {/* Ad container removed - Auto Ads will handle placement */}
 
             {/* Simulator Actions */}
             <motion.div
@@ -954,11 +982,7 @@ export default function PremiumSimulatorV2({ wizardState, setWizardState, onRese
             </motion.div>
 
             {/* Ad Placement 3 - Bottom of Results (High CTR Before Exit) */}
-            <div className="flex justify-center py-6 md:py-8">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+            {/* Ad container removed - Auto Ads will handle placement */}
 
             {/* Footer */}
             <div className="text-center py-6 text-slate-400 text-sm">
@@ -968,27 +992,6 @@ export default function PremiumSimulatorV2({ wizardState, setWizardState, onRese
         </div>
       </motion.div>
 
-      {/* Sticky Bottom Ad - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t-2 border-slate-700 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="p-4 pb-6">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd 
-                adSlot="7290777867"
-                adFormat="auto"
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* City Comparison Modal - Placeholder for future implementation */}
       {showComparison && (

@@ -5,8 +5,7 @@ import StructuredData from '@/components/StructuredData'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DataSource from '@/components/ui/DataSource'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: 'Calculateur Frais de Garde Québec 2026 - CPE vs Garderie Privée (Crédit d\'Impôt)',
   description: 'Comparez les coûts réels entre CPE subventionné (9,10$/jour) et garderie privée au Québec. Inclut le crédit d\'impôt provincial jusqu\'à 78%. Gratuit.',
@@ -45,7 +44,7 @@ export default function DaycarePage() {
         category="FinanceApplication"
         aggregateRating={{
           ratingValue: 4.7,
-          ratingCount: 890,
+          ratingCount: 680,
         }}
       />
       <main className="min-h-screen bg-white">
@@ -65,12 +64,8 @@ export default function DaycarePage() {
           <DaycareClient />
         </div>
 
-        {/* Ad Placement 1 - After Calculator */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 1 - After Calculator */}
+        <ResponsiveAd />
 
         {/* Smart Cross-Link */}
         <ToolCrossLink variant="to-salary" />
@@ -118,12 +113,8 @@ export default function DaycarePage() {
           </div>
         </section>
 
-        {/* Ad Placement 2 - After Educational Section */}
-        <div className="flex justify-center py-6 md:py-8">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Responsive Ad 2 - After Educational Section */}
+        <ResponsiveAd />
 
         {/* Pro Tips Section - V2 Gold Standard */}
         <section className="mt-12 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-lg p-8">
@@ -176,6 +167,9 @@ export default function DaycarePage() {
             </div>
           </div>
         </section>
+
+        {/* Responsive Ad 3 - After Pro Tips Section */}
+        <ResponsiveAd />
 
         {/* Data Source */}
         <div className="mt-8">

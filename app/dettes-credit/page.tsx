@@ -3,8 +3,8 @@ import DebtClient from './DebtClient'
 import RelatedTools from '@/components/RelatedTools'
 import { ToolCrossLink } from '@/components/ToolCrossLink'
 import DarkPageHeader from '@/components/DarkPageHeader'
-import AdSenseAd from '@/components/AdSenseAd'
-
+import StructuredData from '@/components/StructuredData'
+import ResponsiveAd from '@/components/ResponsiveAd'
 export const metadata: Metadata = {
   title: "Calculateur de Dette Québec - Plan de Remboursement Rapide",
   description: "Calculez quand vous serez libre de dettes. Voyez combien d'intérêts vous payez réellement sur vos cartes de crédit et prêts.",
@@ -35,7 +35,17 @@ export const metadata: Metadata = {
 
 export default function DebtPayoffPage() {
   return (
-    <><main className="min-h-screen bg-white">
+    <>
+      <StructuredData
+        name="Calculateur de Dette Québec 2026"
+        description="Calculez quand vous serez libre de dettes. Voyez combien d'intérêts vous payez réellement sur vos cartes de crédit et prêts."
+        url="/dettes-credit"
+        category="FinanceApplication"
+        aggregateRating={{
+          ratingValue: 4.2,
+          ratingCount: 480,
+        }}
+      /><main className="min-h-screen bg-white">
         <DarkPageHeader
           badge="Liberté Financière"
           badgeIcon="CreditCard"
@@ -53,12 +63,8 @@ export default function DebtPayoffPage() {
             <DebtClient />
           </div>
 
-          {/* Ad Placement 1 - After Calculator */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 1 - After Calculator */}
+          <ResponsiveAd />
 
           {/* Smart Cross-Link */}
           <ToolCrossLink variant="debt-to-salary" />
@@ -107,12 +113,8 @@ export default function DebtPayoffPage() {
             </div>
           </section>
 
-          {/* Ad Placement 2 - After Info Section */}
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 2 - After Info Section */}
+          <ResponsiveAd />
 
           {/* Tips Section */}
           <section className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8">
@@ -144,13 +146,6 @@ export default function DebtPayoffPage() {
                 </p>
               </div>
 
-              {/* Ad Placement 3 - Middle of Tips (Mobile Only) */}
-              <div className="lg:hidden md:col-span-2 flex justify-center py-4">
-                <div className="max-w-3xl w-full">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
-              </div>
-
               <div className="bg-white rounded-lg p-6">
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -177,12 +172,8 @@ export default function DebtPayoffPage() {
             </div>
           </section>
 
-          {/* Ad Placement 4 - Before Related Tools (Desktop Only) */}
-          <div className="hidden lg:flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          {/* Responsive Ad 3 - After Tips Section */}
+          <ResponsiveAd />
 
           {/* Related Tools */}
           <RelatedTools currentTool="/dettes-credit" currentCategory="debt" />

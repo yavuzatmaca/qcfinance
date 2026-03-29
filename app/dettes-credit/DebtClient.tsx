@@ -3,14 +3,11 @@
 import { useState } from 'react'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { CreditCard, Share2, Bookmark, X, AlertTriangle, CheckCircle } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
-
 export default function DebtClient() {
   const [balance, setBalance] = useState<number>(5000)
   const [interestRate, setInterestRate] = useState<number>(19.99)
   const [monthlyPayment, setMonthlyPayment] = useState<number>(200)
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
-  const [showStickyAd, setShowStickyAd] = useState(true)
 
   // Calculate minimum payment (typically 3% of balance or $10, whichever is greater)
   const minimumPayment = Math.max(10, balance * 0.03)
@@ -540,24 +537,6 @@ export default function DebtClient() {
         </div>
       </div>
     </div>
-
-      {/* STICKY BOTTOM AD - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute -top-8 right-2 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-700 transition-colors z-10 touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="min-h-[100px] flex items-center justify-center">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

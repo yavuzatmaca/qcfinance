@@ -157,6 +157,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     
     // ========== TIER 4: Content Pages (Priority 0.3-0.5) ==========
     {
+      url: `${baseUrl}/blog`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/faq`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
@@ -195,7 +201,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
   
   // ============================================================================
-  // 2. DYNAMIC SALARY PAGES - Programmatic SEO (341 pages)
+  // 3. DYNAMIC SALARY PAGES - Programmatic SEO (341 pages)
   // ============================================================================
   // Strategy: 500$ increments for better long-tail SEO coverage
   // Range: 30,000$ to 200,000$ (covers 95% of Quebec salaries)
@@ -217,9 +223,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
   
   // ============================================================================
-  // 3. COMBINE & RETURN
+  // 4. COMBINE & RETURN
   // ============================================================================
-  // Total URLs: ~370 (29 static + 341 dynamic salary pages)
+  // Total URLs: ~371 (29 static + 341 dynamic salary pages)
+  // Blog posts: Separate blog-sitemap.xml for better organization
   // Build time: <1 second (efficient generation)
   // SEO Impact: Maximum coverage for salary-related searches
   // ============================================================================

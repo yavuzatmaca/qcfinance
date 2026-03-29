@@ -8,9 +8,10 @@ import DataSource from '@/components/ui/DataSource'
 import SalaryLinkGrid from '@/components/calculators/SalaryLinkGrid'
 import SalaryStatsSwiper from '@/components/SalaryStatsSwiper'
 import { calculateTaxes } from '@/utils/taxLogic'
+import ResponsiveAd from '@/components/ResponsiveAd'
 import DarkPageHeader from '@/components/DarkPageHeader'
 import { Sparkles } from 'lucide-react'
-import AdSenseAd from '@/components/AdSenseAd'
+
 
 // Generate static paths for 341 salary pages (30k to 200k in 500$ increments)
 // This creates more SEO entry points for long-tail salary searches
@@ -144,11 +145,6 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
               '@type': 'Offer',
               price: '0',
               priceCurrency: 'CAD'
-            },
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: '4.8',
-              ratingCount: '2450'
             }
           })
         }}
@@ -171,12 +167,10 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
           <div className="lg:col-span-8 space-y-6">
             <LuxurySalaryCalculator initialIncome={salaryNum} />
 
-            {/* Ad Placement 1 - After Calculator (Desktop + Mobile) */}
-            <div className="flex justify-center py-6 md:py-8">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+            {/* Responsive Ad - After Calculator, Before Purchase Power */}
+            <ResponsiveAd />
+
+
 
             {/* Votre Pouvoir d'Achat - NO SWIPE (Normal Grid) */}
             <PurchasePowerCard 
@@ -219,12 +213,7 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
               </p>
             </div>
             
-            {/* Ad Placement 2 - After Educational Content (Mobile Only) */}
-            <div className="lg:hidden flex justify-center py-6">
-              <div className="max-w-3xl w-full">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+
           </div>
 
           <div className="lg:col-span-4">
@@ -241,12 +230,7 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
                 effectiveRate={effectiveRate}
               />
               
-              {/* Ad Placement 3 - Sidebar (Desktop Only) */}
-              <div className="hidden lg:flex justify-center">
-                <div className="w-full">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
@@ -341,14 +325,7 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
         </div>
       </div>
 
-      {/* AdSense - Après indicateurs clés (Desktop + Mobile) */}
-      <div className="bg-slate-50 py-6 md:py-8">
-        <div className="max-w-6xl mx-auto px-4 flex justify-center">
-          <div className="w-full max-w-3xl">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
-      </div>
+
 
       {/* Dynamic SEO Content - Programmatic SEO */}
       <div className="bg-white py-6 border-t border-slate-100">
@@ -427,25 +404,18 @@ export default function DynamicSalaryPage({ params }: { params: { salary: string
               </p>
             </div>
 
-            {/* AdSense - Avant FAQ (Mobile Only) */}
-            <div className="lg:hidden my-6 md:my-8 flex justify-center">
-              <div className="w-full max-w-3xl">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
-            </div>
+
 
             {/* FAQ Section - Schema Markup Ready */}
             <div className="mt-8 pt-6 border-t border-slate-200">
+              {/* Responsive Ad - Before FAQ */}
+              <ResponsiveAd />
+
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
                 Questions fréquentes sur {formattedAmount} $
               </h2>
               
-              {/* Ad Placement 6 - Middle of FAQ (Mobile Only) */}
-              <div className="lg:hidden my-6 flex justify-center">
-                <div className="w-full max-w-3xl">
-                  <AdSenseAd adSlot="7290777867" />
-                </div>
-              </div>
+
               
               <div className="space-y-4">
                 {/* FAQ 1 */}

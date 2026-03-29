@@ -334,3 +334,36 @@
 .animate-slide-in {
   animation: slideIn 0.3s ease-out;
 }
+/* Mobile Anchor Ad Animations */
+@keyframes mobile-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes timer-shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.mobile-anchor-ad {
+  animation: mobile-slide-up 0.3s ease-out;
+}
+
+.mobile-timer-bar {
+  animation: timer-shrink 30s linear forwards;
+}
+
+/* Prevent animation conflicts */
+.mobile-anchor-ad * {
+  animation-fill-mode: both;
+}

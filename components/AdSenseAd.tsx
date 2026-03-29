@@ -4,29 +4,38 @@ import { useEffect } from 'react'
 
 interface AdSenseAdProps {
   adSlot: string
-  adFormat?: 'auto' | 'fluid' | 'rectangle'
+  adFormat?: string
   fullWidthResponsive?: boolean
+  className?: string
   style?: React.CSSProperties
 }
 
-export default function AdSenseAd({ 
-  adSlot, 
+declare global {
+  interface Window {
+    adsbygoogle: any[]
+  }
+}
+
+export default function AdSenseAd({
+  adSlot,
   adFormat = 'auto',
   fullWidthResponsive = true,
+  className = '',
   style = { display: 'block' }
 }: AdSenseAdProps) {
   useEffect(() => {
     try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
-    } catch (err) {
-      // Silent fail
+      if (typeof window !== 'undefined') {
+        (window.adsbygoogle = window.adsbygoogle || []).push({})
+      }
+    } catch (error) {
+      console.error('AdSense error:', error)
     }
   }, [])
 
   return (
     <ins
-      className="adsbygoogle"
+      className={`adsbygoogle ${className}`}
       style={style}
       data-ad-client="ca-pub-2733523563879283"
       data-ad-slot={adSlot}

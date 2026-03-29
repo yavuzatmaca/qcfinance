@@ -7,7 +7,6 @@ import { generateSalaryPDF } from '@/utils/pdfGenerator'
 import InteractiveDonutChart from './ui/InteractiveDonutChart'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { useDebouncedAnalytics } from '@/hooks/useDebouncedAnalytics'
-import AdSenseAd from '@/components/AdSenseAd'
 import { DollarSign, TrendingUp, Calculator, X } from 'lucide-react'
 
 interface LuxurySalaryCalculatorProps {
@@ -26,7 +25,6 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
   const [isChartOpen, setIsChartOpen] = useState(false)
   const [isRRSPOpen, setIsRRSPOpen] = useState(false)
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
-  const [showStickyAd, setShowStickyAd] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   
   // Analytics tracking
@@ -117,11 +115,6 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
           net_income: Math.round(results.netIncome),
           total_deductions: Math.round(results.totalDeductions),
         })
-      }
-      
-      // Dispatch custom event for IntroPopup
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('qcfinance:calculation-complete'))
       }
       
       // Smooth scroll to top before navigation
@@ -328,28 +321,6 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
         </div>
       )}
 
-      {/* Sticky Bottom Ad - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-slate-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute top-2 right-2 z-10 w-8 h-8 bg-slate-800/80 hover:bg-slate-900 text-white rounded-full flex items-center justify-center transition-all touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="p-4 pb-6">
-              <div className="text-[10px] text-slate-500 text-center mb-2">Publicité</div>
-              <AdSenseAd 
-                adSlot="7290777867"
-                adFormat="auto"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
     <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
       {/* Header and Input Section - Only show on landing page */}
       {initialIncome === 0 && (
@@ -478,10 +449,8 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
 
       {/* AdSense Reklam - Buton Altı */}
       {initialIncome === 0 && (
-        <div className="mb-8 flex justify-center">
-          <div className="w-full max-w-2xl">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
+        <div>
+          {/* Ad container removed - Auto Ads will handle placement */}
         </div>
       )}
         </>
@@ -533,10 +502,8 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
 
           {/* AdSense - Après résultats, avant détails */}
           {initialIncome > 0 && (
-            <div className="flex justify-center py-4 md:py-6">
-              <div className="w-full max-w-2xl">
-                <AdSenseAd adSlot="7290777867" />
-              </div>
+            <div>
+              {/* Ad container removed - Auto Ads will handle placement */}
             </div>
           )}
 
@@ -622,6 +589,48 @@ export default function LuxurySalaryCalculator({ initialIncome }: LuxurySalaryCa
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Responsive Ad - Between Deductions Detail and Chart */}
+          <div className="border-t border-slate-200 pt-6 pb-2">
+            <div className="flex justify-center">
+              <div className="w-full max-w-md">
+                {/* Ad Label */}
+                <div className="text-[10px] text-slate-400 text-center mb-2 uppercase tracking-wide">
+                  Publicité
+                </div>
+                
+                {/* Desktop Ad */}
+                <ins
+                  className="adsbygoogle hidden lg:block"
+                  style={{ display: 'block' }}
+                  data-ad-client="ca-pub-2733523563879283"
+                  data-ad-slot="6737944215"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"
+                />
+                
+                {/* Tablet Ad */}
+                <ins
+                  className="adsbygoogle hidden md:block lg:hidden"
+                  style={{ display: 'block' }}
+                  data-ad-client="ca-pub-2733523563879283"
+                  data-ad-slot="6737944215"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"
+                />
+                
+                {/* Mobile Ad */}
+                <ins
+                  className="adsbygoogle block md:hidden"
+                  style={{ display: 'block' }}
+                  data-ad-client="ca-pub-2733523563879283"
+                  data-ad-slot="6737944215"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Interactive Chart - Collapsible */}

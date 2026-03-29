@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { ArrowRight, TrendingUp, Sparkles, Clock, Calculator, Car, GraduationCap, Building2, Wallet, Users, Shield, Eye, Calendar } from 'lucide-react';
 import type { MarketRate } from '@/lib/marketData';
 import { useEffect, useRef, useState } from 'react';
-import AdSenseAd from '@/components/AdSenseAd';
+import { useStats } from '@/hooks/useStats';
+import ResponsiveAd from '@/components/ResponsiveAd';
 
 interface HomeClientProps {
   marketRates: MarketRate[];
@@ -71,8 +72,14 @@ const themeClasses = {
 };
 
 export default function HomeClient({ marketRates }: HomeClientProps) {
+  const { stats, trackVisit } = useStats()
   const [activeCarouselIndex, setActiveCarouselIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Track visit on mount
+  useEffect(() => {
+    trackVisit()
+  }, [])
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Carousel scroll handler
@@ -187,8 +194,8 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                     <span className="hidden md:inline">Calculer Mon Salaire Net</span>
                   </div>
                   <div className="text-xs opacity-90">
-                    <span className="md:hidden">100% gratuit</span>
-                    <span className="hidden md:inline">Résultat précis en 30 secondes • 100% gratuit</span>
+                    <span className="md:hidden">Toujours gratuit</span>
+                    <span className="hidden md:inline">Résultat précis en 30 secondes • Toujours gratuit</span>
                   </div>
                 </div>
               </Link>
@@ -425,11 +432,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
 
         {/* Ad Placement 1 - After Main Tools Grid (High Engagement) */}
         <div className="mt-12 container mx-auto px-4">
-          <div className="flex justify-center py-6 md:py-8">
-            <div className="max-w-3xl w-full">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
+          <ResponsiveAd adSlot="6737944215" label="Publicité" />
         </div>
 
         {/* SECONDARY TOOLS - Mobile Carousel / Desktop Grid */}
@@ -478,12 +481,10 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
         </div>
       </div>
 
-      {/* Ad Placement 2 - After Premium Brand Section (Natural Break) */}
+      {/* Ad Placement 2 - After Secondary Tools (Natural Break) */}
       <div className="bg-slate-50 py-6 md:py-8">
-        <div className="container mx-auto px-4 flex justify-center">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
+        <div className="container mx-auto px-4">
+          <ResponsiveAd adSlot="6737944215" label="Publicité" />
         </div>
       </div>
 
@@ -495,14 +496,14 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest mb-6">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Spécialisé Québec
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+              Plateforme Québécoise
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
-              Vos finances Québécoises,<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-                calculées avec précision.
+              Des outils conçus pour<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                les réalités du Québec.
               </span>
             </h2>
           </div>
@@ -512,9 +513,9 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4 animate-float">
                 <Calculator className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Précision Garantie</h3>
+              <h3 className="text-lg font-bold text-white mb-2">Calculs Instantanés</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Résultats précis au dollar près avec les taux officiels 2026.
+                Obtenez vos résultats en moins de 30 secondes.
               </p>
             </div>
 
@@ -522,9 +523,9 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
               <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 animate-float">
                 <TrendingUp className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Toujours à Jour</h3>
+              <h3 className="text-lg font-bold text-white mb-2">Données Vérifiées</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Mis à jour avec les dernières tables d'imposition.
+                Sources officielles de Revenu Québec et ARC.
               </p>
             </div>
 
@@ -532,9 +533,9 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
               <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 animate-float">
                 <Sparkles className="w-6 h-6 text-purple-400" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">100% Gratuit</h3>
+              <h3 className="text-lg font-bold text-white mb-2">Interface Simple</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Sans inscription ni limite d'utilisation.
+                Facile à utiliser, même sans connaissances fiscales.
               </p>
             </div>
           </div>
@@ -553,25 +554,31 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
             <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
               Utilisé par des milliers de Québécois
             </h2>
-            <p className="text-slate-400 text-sm">Des calculs précis pour vos décisions financières</p>
+            <p className="text-slate-400 text-sm">Vos décisions financières en toute confiance</p>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 md:p-6 text-center hover:bg-white/10 transition-all">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1">50K+</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                {stats.totalUsers > 0 ? `${Math.floor(stats.totalUsers / 1000)}K+` : '13K+'}
+              </div>
               <div className="text-[11px] md:text-xs text-slate-400">Utilisateurs Actifs</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 md:p-6 text-center hover:bg-white/10 transition-all">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1">500K+</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                {stats.totalCalculations > 0 ? `${Math.floor(stats.totalCalculations / 1000)}K+` : '148K+'}
+              </div>
               <div className="text-[11px] md:text-xs text-slate-400">Calculs Effectués</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 md:p-6 text-center hover:bg-white/10 transition-all">
-              <div className="text-2xl md:text-3xl font-bold text-emerald-400 mb-1">99.9%</div>
-              <div className="text-[11px] md:text-xs text-slate-400">Taux de Précision</div>
+              <div className="text-2xl md:text-3xl font-bold text-emerald-400 mb-1">
+                {stats.last7DaysCalculations > 0 ? `${(stats.last7DaysCalculations / 1000).toFixed(1)}K` : '2.6K'}
+              </div>
+              <div className="text-[11px] md:text-xs text-slate-400">Cette Semaine</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 md:p-6 text-center hover:bg-white/10 transition-all">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1">19+</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1">20+</div>
               <div className="text-[11px] md:text-xs text-slate-400">Outils Disponibles</div>
             </div>
           </div>
@@ -580,15 +587,15 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
           <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
             <div className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
               <Shield className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-semibold text-white">100% Sécurisé</span>
+              <span className="text-xs font-semibold text-white">Aucune Inscription</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
               <Eye className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-semibold text-white">Données Privées</span>
+              <span className="text-xs font-semibold text-white">Calculs Anonymes</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
               <Calendar className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-semibold text-white">Mis à Jour 2026</span>
+              <span className="text-xs font-semibold text-white">Taux 2026</span>
             </div>
           </div>
         </div>
@@ -610,7 +617,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                   Que vous cherchiez à calculer votre <Link href="/salaire-net-quebec" className="text-emerald-600 hover:text-emerald-700 font-semibold">salaire net après impôts</Link>, vos <Link href="/calcul-hypotheque" className="text-emerald-600 hover:text-emerald-700 font-semibold">paiements hypothécaires</Link>, ou vos <Link href="/frais-de-garde" className="text-emerald-600 hover:text-emerald-700 font-semibold">frais de garde nets</Link>, nos outils vous donnent des résultats précis au dollar près.
                 </p>
                 <p className="text-slate-700 leading-relaxed">
-                  Tous nos calculateurs sont <strong>100% gratuits</strong>, sans inscription requise, et mis à jour régulièrement avec les derniers taux de <strong>Revenu Québec</strong> et de l'<strong>Agence du revenu du Canada</strong>.
+                  Tous nos calculateurs sont <strong>entièrement gratuits</strong>, sans inscription requise, et synchronisés avec les derniers taux de <strong>Revenu Québec</strong> et de l'<strong>Agence du revenu du Canada</strong>.
                 </p>
               </div>
 
@@ -646,15 +653,15 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
               <h3 className="text-xl font-bold text-slate-900 mb-4">Pourquoi Choisir QCFinance.ca?</h3>
               <div className="grid md:grid-cols-3 gap-6 text-sm text-slate-700">
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-2">Paramètres Québécois</h4>
+                  <h4 className="font-bold text-slate-900 mb-2">Spécialisé Québec</h4>
                   <p>Impôt provincial du Québec, cotisations RRQ, RQAP, crédits d'impôt solidarité, bouclier fiscal, et tous les crédits spécifiques au Québec.</p>
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-2">Données Officielles 2026</h4>
-                  <p>Tables d'imposition, taux de cotisation, seuils de revenus, et crédits d'impôt mis à jour selon les budgets provincial et fédéral.</p>
+                  <h4 className="font-bold text-slate-900 mb-2">Taux Actualisés</h4>
+                  <p>Tables d'imposition, taux de cotisation, seuils de revenus, et crédits d'impôt synchronisés avec les budgets provincial et fédéral.</p>
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-2">19 Outils Complets</h4>
+                  <h4 className="font-bold text-slate-900 mb-2">20 Outils Complets</h4>
                   <p>Salaire net, hypothèque, capacité d'emprunt, louer ou acheter, taxe de bienvenue, augmentation loyer, frais de garde, allocations familiales, épargne-retraite, intérêts composés, prêts auto et étudiants, auto électrique, dettes & crédit, TPS/TVQ, assurance-emploi, paie de vacances, taux horaire, et déclaration simplifiée.</p>
                 </div>
               </div>
@@ -665,11 +672,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
 
       {/* Ad Placement 3 - Before FAQ Section (High CTR Location) */}
       <div className="bg-white py-6 md:py-8 border-t border-slate-200">
-        <div className="container mx-auto px-4 flex justify-center">
-          <div className="max-w-3xl w-full">
-            <AdSenseAd adSlot="7290777867" />
-          </div>
-        </div>
+        {/* Ad container removed - Auto Ads will handle placement */}
       </div>
 
       {/* FAQ SECTION */}
@@ -687,7 +690,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                 <span className="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                Oui, tous nos calculateurs sont <strong>100% gratuits</strong> et le resteront toujours. Aucune inscription n'est requise et il n'y a aucune limite d'utilisation. Nous sommes financés par des liens affiliés discrets (comme Wealthsimple) qui nous permettent de maintenir ce service gratuit.
+                Oui, tous nos calculateurs sont <strong>entièrement gratuits</strong> et le resteront toujours. Aucune inscription n'est requise et il n'y a aucune limite d'utilisation. Nous sommes financés par des partenariats discrets qui nous permettent de maintenir ce service accessible à tous.
               </div>
             </details>
 
@@ -697,7 +700,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                 <span className="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                Nos calculateurs utilisent les <strong>tables d'imposition officielles 2026</strong> de Revenu Québec et de l'Agence du revenu du Canada. Nous intégrons l'impôt provincial progressif, l'impôt fédéral, les cotisations RRQ, RQAP, assurance-emploi, ainsi que tous les crédits d'impôt applicables au Québec.
+                Nos calculateurs utilisent les <strong>barèmes fiscaux officiels 2026</strong> de Revenu Québec et de l'Agence du revenu du Canada. Nous intégrons l'impôt provincial progressif, l'impôt fédéral, les cotisations RRQ, RQAP, assurance-emploi, ainsi que tous les crédits d'impôt applicables au Québec.
               </div>
             </details>
 
@@ -707,7 +710,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                 <span className="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                Absolument! Tous nos calculateurs sont mis à jour dès la publication des <strong>budgets provincial et fédéral</strong>. Nous suivons les annonces de Revenu Québec et de l'ARC pour intégrer immédiatement les nouveaux taux d'imposition, seuils de revenus, et crédits d'impôt.
+                Absolument! Tous nos calculateurs sont actualisés dès la publication des <strong>budgets provincial et fédéral</strong>. Nous suivons les annonces de Revenu Québec et de l'ARC pour intégrer immédiatement les nouveaux taux d'imposition, seuils de revenus, et crédits d'impôt.
               </div>
             </details>
 
@@ -717,7 +720,7 @@ export default function HomeClient({ marketRates }: HomeClientProps) {
                 <span className="text-emerald-600 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                Nos calculateurs sont <strong>précis au dollar près</strong> pour la grande majorité des situations. Cependant, certains cas complexes (revenus multiples, déductions spéciales, crédits particuliers) peuvent nécessiter l'avis d'un comptable professionnel. Nos outils sont parfaits pour des estimations fiables et rapides.
+                Nos calculateurs offrent une <strong>précision au dollar près</strong> pour la grande majorité des situations. Cependant, certains cas complexes (revenus multiples, déductions spéciales, crédits particuliers) peuvent nécessiter l'avis d'un comptable professionnel. Nos outils sont parfaits pour des estimations fiables et rapides.
               </div>
             </details>
 

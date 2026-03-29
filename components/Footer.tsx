@@ -134,6 +134,7 @@ export default function Footer() {
               Support
             </h3>
             <ul className="space-y-0">
+              <FooterLink href="/blog" icon={<FileText className="w-4 h-4" />} text="Blog" />
               <FooterLink href="/a-propos" icon={<Info className="w-4 h-4" />} text="À Propos" />
               <FooterLink href="/faq" icon={<HelpCircle className="w-4 h-4" />} text="FAQ" />
               <FooterLink href="/contact" icon={<MessageSquare className="w-4 h-4" />} text="Contact" />

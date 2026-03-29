@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { Baby, Users, Minus, Plus, TrendingUp, Sparkles, Share2, Bookmark, X } from 'lucide-react'
 import { AffiliateCard } from '@/components/AffiliateCard'
-import AdSenseAd from '@/components/AdSenseAd'
-
 // 2026 Federal CCB (ACE) Constants
 const FEDERAL_MAX_UNDER_6 = 7787 // per year
 const FEDERAL_MAX_6_TO_17 = 6570 // per year
@@ -22,7 +20,6 @@ export default function FamilyBenefitsClient() {
   const [children6to17, setChildren6to17] = useState(0)
   const [custody, setCustody] = useState<'full' | 'shared'>('full')
   const [isQuickCalcExpanded, setIsQuickCalcExpanded] = useState(false)
-  const [showStickyAd, setShowStickyAd] = useState(true)
 
   // Calculations
   const custodyMultiplier = custody === 'shared' ? 0.5 : 1.0
@@ -514,24 +511,6 @@ export default function FamilyBenefitsClient() {
         </div>
       </div>
     </div>
-
-      {/* STICKY BOTTOM AD - Mobile Only */}
-      {showStickyAd && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
-          <div className="relative">
-            <button
-              onClick={() => setShowStickyAd(false)}
-              className="absolute -top-8 right-2 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-700 transition-colors z-10 touch-manipulation active:scale-95"
-              aria-label="Fermer la publicité"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="min-h-[100px] flex items-center justify-center">
-              <AdSenseAd adSlot="7290777867" />
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }
