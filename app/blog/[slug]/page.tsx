@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${post.title} | Blog QCFinance`,
     description: post.excerpt,
-    keywords: post.seoKeywords,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -46,6 +45,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: post.title,
       description: post.excerpt,
     },
+    ...(post.seoKeywords && {
+      other: {
+        keywords: post.seoKeywords,
+      },
+    }),
   }
 }
 

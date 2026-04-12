@@ -14,6 +14,7 @@ export interface BlogPost {
   readTime: string
   author: string
   featured: boolean
+  seoKeywords?: string
   content?: string
 }
 
@@ -42,6 +43,7 @@ export function getAllPosts(): BlogPost[] {
         readTime: data.readTime,
         author: data.author,
         featured: data.featured || false,
+        seoKeywords: data.seoKeywords,
       }
     })
 
@@ -76,6 +78,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
       readTime: data.readTime,
       author: data.author,
       featured: data.featured || false,
+      seoKeywords: data.seoKeywords,
       content,
     }
   } catch (error) {
