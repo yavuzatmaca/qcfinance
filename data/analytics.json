@@ -1,0 +1,41 @@
+{
+  "pageViews": [
+    {
+      "path": "/salaire-net-quebec",
+      "timestamp": "2026-02-02T04:29:57.114Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+      "country": "Unknown"
+    },
+    {
+      "path": "/salaire-net-quebec",
+      "timestamp": "2026-02-02T04:29:57.090Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+      "country": "Unknown"
+    },
+    {
+      "path": "/",
+      "timestamp": "2026-02-02T04:29:03.563Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+      "country": "Unknown"
+    },
+    {
+      "path": "/",
+      "timestamp": "2026-02-02T04:29:03.493Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+      "country": "Unknown"
+    }
+  ],
+  "pageCounts": {
+    "/": 2,
+    "/salaire-net-quebec": 2
+  },
+  "dailyViews": {
+    "2026-02-02": 4
+  },
+  "countryCounts": {
+    "Unknown": 4
+  },
+  "deviceCounts": {
+    "desktop": 4
+  }
+}

@@ -24,15 +24,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
 
+  const canonicalUrl = `https://qcfinance.ca/blog/${params.slug}`
+  
   return {
     title: `${post.title} | Blog QCFinance`,
     description: post.excerpt,
+    keywords: post.seoKeywords,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
       type: 'article',
       publishedTime: post.date,
       authors: [post.author],
+      url: canonicalUrl,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
     },
   }
 }

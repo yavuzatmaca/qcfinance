@@ -1,0 +1,27 @@
+{
+  "totalCalculations": 148234,
+  "totalUsers": 13166,
+  "lastUpdated": "2026-03-14T09:43:15.995Z",
+  "dailyCalculations": {
+    "2026-02-20": 234,
+    "2026-02-21": 312,
+    "2026-02-22": 289,
+    "2026-02-23": 356,
+    "2026-02-24": 401,
+    "2026-02-25": 378,
+    "2026-02-26": 423,
+    "2026-02-27": 187
+  },
+  "calculatorUsage": {
+    "salaire-net": 42156,
+    "hypotheque": 28934,
+    "capacite-emprunt": 19876,
+    "allocations-familiales": 14523,
+    "assurance-emploi": 11234,
+    "tps-tvq": 9876,
+    "taxe-bienvenue": 8234,
+    "pret-auto": 6789,
+    "epargne-retraite": 4567,
+    "dettes-credit": 2045
+  }
+}

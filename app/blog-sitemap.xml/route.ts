@@ -15,8 +15,8 @@ export async function GET() {
   <url>
     <loc>${baseUrl}/blog/${post.slug}</loc>
     <lastmod>${post.date}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+    <priority>${post.featured ? '0.9' : '0.8'}</priority>
   </url>`
     )
     .join('')}

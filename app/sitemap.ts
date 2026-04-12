@@ -159,8 +159,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/blog`,
       lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.7,
+      changeFrequency: 'daily',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/faq`,
@@ -214,11 +214,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Generate salary pages with 500$ increments
   // This creates more entry points for Google (341 vs 171 pages)
   for (let salary = 30000; salary <= 200000; salary += 500) {
+    // Higher priority for common salary ranges
+    let priority = 0.6 // Default for less common salaries
+    if (salary >= 40000 && salary <= 100000) {
+      priority = 0.7 // Common salary range in Quebec
+    }
+    if (salary >= 50000 && salary <= 80000) {
+      priority = 0.75 // Most common salary range
+    }
+    
     salaryRoutes.push({
       url: `${baseUrl}/salaire-net-quebec/${salary}`,
       lastModified: salaryLastModified,
       changeFrequency: 'monthly',
-      priority: 0.8, // High priority for programmatic SEO pages
+      priority: priority,
     })
   }
   
